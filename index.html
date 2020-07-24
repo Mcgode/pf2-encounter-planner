@@ -100,7 +100,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 
     <script>
-        let session = new PF2EncounterPlanner.Session()
+        let session = PF2EncounterPlanner.Session.makeSession()
         let selectedEncounter = null
 
         let addEncounterModal = $('#addEncounterModal');
@@ -211,6 +211,8 @@
             animation: 150,
             onEnd: function (event) { session.moveEncounterIndex(event.oldIndex, event.newIndex) }
         })
+
+        updatePlanner()
     </script>
 </body>
 </html>

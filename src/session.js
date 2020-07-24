@@ -33,6 +33,7 @@ export class Session
 
         let newEncounter = new Encounter(name, newId)
         this.encounters.push(newEncounter)
+        this.saveSession()
         return newEncounter
     }
 
@@ -44,6 +45,7 @@ export class Session
             encounter.elements.push(element)
             element.registerToSession(this)
         }
+        this.saveSession()
         return encounter != null
     }
 
@@ -74,6 +76,7 @@ export class Session
         if (this.encounters.find(e => e.name === newName) != null || encounter == null) return false;
 
         encounter.name = newName
+        this.saveSession()
         return true
     }
 
@@ -81,6 +84,7 @@ export class Session
     removeEncounter(encounter)
     {
         this.encounters.splice(this.encounters.findIndex(e => e.id === encounter.id), 1)
+        this.saveSession()
     }
 
 
@@ -113,5 +117,12 @@ export class Session
             result.encounters.push(Encounter.importFromJSON(e))
         }
         return result
+    }
+
+
+    static makeSession(name = 'Default') {
+        let data = window.localStorage.getItem(`session:${name}`)
+
+        return data == null ? new Session(name) : Session.importFromJSON(data)
     }
 }
