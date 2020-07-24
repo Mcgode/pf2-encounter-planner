@@ -21,6 +21,9 @@ export class Session
 
     addEncounter(name)
     {
+        let newId = Encounter.getIdFriendlyName(name)
+        if (this.encounters.find(e => e.id === newId) != null) return null;
+
         let newEncounter = new Encounter(name)
         this.encounters.push(newEncounter)
         return newEncounter

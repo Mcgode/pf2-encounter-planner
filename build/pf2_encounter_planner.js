@@ -14,7 +14,14 @@
     {
         constructor(name = "Default") {
             this.name = name;
+            this.id = Encounter.getIdFriendlyName(name);
             this.elements = [];
+        }
+
+
+        static getIdFriendlyName(name)
+        {
+            return name.toLowerCase().split(/\s/).filter((s) => s.length > 0).join("-")
         }
     }
 
@@ -40,6 +47,9 @@
 
         addEncounter(name)
         {
+            let newId = Encounter.getIdFriendlyName(name);
+            if (this.encounters.find(e => e.id === newId) != null) return null;
+
             let newEncounter = new Encounter(name);
             this.encounters.push(newEncounter);
             return newEncounter

@@ -81,8 +81,8 @@
 
 
         function addEncounter(name) {
-            if (name != null && name.length > 0)
-                addEncounterToAccordion(session.addEncounter(name))
+            if (name != null && name.trim().length > 0)
+                addEncounterToAccordion(session.addEncounter(name.trim()))
             $('#addEncounterForm input').val("")
             addEncounterModal.modal('hide')
 
@@ -105,12 +105,14 @@
             if (encounter == null) return;
 
             let accordion = $('#encountersAccordion')
-            let collapseId = `${encounter.name}-card-collapse`
+            let collapseId = `${encounter.id}-card-collapse`
             accordion.append(
-                $("<div></div>").addClass('card').append(
+                $("<div></div>")
+                    .addClass('card')
+                    .append(
                     $("<div></div>")
                         .addClass('card-header')
-                        .prop('id', `${encounter.name}-card-header`)
+                        .prop('id', `${encounter.id}-card-header`)
                         .append(
                             $("<h2></h2>")
                                 .addClass("mb-0")
@@ -125,7 +127,7 @@
                                         .text(encounter.name)
                                 )
                         ),
-                    $(`<div aria-labelledby='${encounter.name}-card-header' data-parent="#encountersAccordion"></div>`)
+                    $(`<div aria-labelledby='${encounter.id}-card-header' data-parent="#encountersAccordion"></div>`)
                         .addClass('collapse')
                         .prop('id', collapseId)
                         .append(
