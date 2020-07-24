@@ -4,13 +4,13 @@
  */
 
 
-import {EncounterElement} from "./encounter_element";
+import EncounterElement from "./encounter_element";
 
 
 export class FightElement extends EncounterElement
 {
-    constructor() {
-        super();
+    constructor(name) {
+        super(name);
 
         this.creatures = []
     }

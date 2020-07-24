@@ -82,4 +82,36 @@ export class Session
     {
         this.encounters.splice(this.encounters.findIndex(e => e.id === encounter.id), 1)
     }
+
+
+    saveSession() {
+        window.localStorage.setItem(`session:${this.name}`, this.exportToJSON())
+    }
+
+
+    exportToJSON()
+    {
+        let object = {
+            params: this.params,
+            name: this.name,
+            encounters: []
+        }
+
+        for (let encounter of this.encounters) {
+            object.encounters.push(encounter.exportToJSON())
+        }
+
+        return JSON.stringify(object)
+    }
+
+
+    static importFromJSON(jsonData) {
+        let object = JSON.parse(jsonData)
+
+        let result = new Session(object.name, object.params)
+        for (let e of object.encounters) {
+            result.encounters.push(Encounter.importFromJSON(e))
+        }
+        return result
+    }
 }

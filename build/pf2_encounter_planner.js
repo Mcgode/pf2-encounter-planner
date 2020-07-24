@@ -5,6 +5,39 @@
 }(this, (function (exports) { 'use strict';
 
     /**
+     * @file encounter_element.js
+     * @author Max Godefroy <max@godefroy.net>
+     */
+
+
+    // import {FightElement} from "./fight_element";
+
+    class EncounterElement
+    {
+        constructor(name) {
+            this.name = name;
+            this.id = null;
+        }
+
+        registerToSession(session)
+        {
+            do {
+                this.id = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
+            } while (session.isIdUsed(this.id))
+        }
+
+        exportToJSON() {
+            return { name: this.name, id: this.id }
+        }
+
+        static importFromJSON(data) {
+            let result = new EncounterElement(data.name);
+            result.id = data.id;
+            return result
+        }
+    }
+
+    /**
      * @file encounter.js
      * @author Max Godefroy <max@godefroy.net>
      */
@@ -22,6 +55,30 @@
         static getIdFriendlyName(name)
         {
             return "encounter-" + name.toLowerCase().split(/[^a-z0-9]/).filter((s) => s.length > 0).join("-")
+        }
+
+
+        exportToJSON()
+        {
+            let object = {
+                name: this.name,
+                id: this.id,
+                elements: []
+            };
+
+            for (let element of this.elements) {
+                object.elements.push(element.exportToJSON());
+            }
+
+            return object
+        }
+
+        static importFromJSON(data) {
+            let result = new Encounter(data.name, data.id);
+            for (let e of data.elements) {
+                result.elements.push(EncounterElement.importFromJSON(e));
+            }
+            return result
         }
     }
 
@@ -108,21 +165,37 @@
         {
             this.encounters.splice(this.encounters.findIndex(e => e.id === encounter.id), 1);
         }
-    }
-
-    /**
-     * @file encounter_element.js
-     * @author Max Godefroy <max@godefroy.net>
-     */
 
 
-    class EncounterElement
-    {
-        registerToSession(session)
+        saveSession() {
+            window.localStorage.setItem(`session:${this.name}`, this.exportToJSON());
+        }
+
+
+        exportToJSON()
         {
-            do {
-                this.id = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
-            } while (session.isIdUsed(this.id))
+            let object = {
+                params: this.params,
+                name: this.name,
+                encounters: []
+            };
+
+            for (let encounter of this.encounters) {
+                object.encounters.push(encounter.exportToJSON());
+            }
+
+            return JSON.stringify(object)
+        }
+
+
+        static importFromJSON(jsonData) {
+            let object = JSON.parse(jsonData);
+
+            let result = new Session(object.name, object.params);
+            for (let e of object.encounters) {
+                result.encounters.push(Encounter.importFromJSON(e));
+            }
+            return result
         }
     }
 
@@ -134,8 +207,8 @@
 
     class FightElement extends EncounterElement
     {
-        constructor() {
-            super();
+        constructor(name) {
+            super(name);
 
             this.creatures = [];
         }
@@ -227,8 +300,8 @@
      */
 
     exports.Session = Session;
-    exports.Encounter = Encounter;
     exports.EncounterElement = EncounterElement;
+    exports.Encounter = Encounter;
     exports.FightElement = FightElement;
     exports.Creature = Creature;
     exports.EncounterRating = EncounterRating;
