@@ -12,16 +12,16 @@
 
     class Encounter
     {
-        constructor(name = "Default") {
+        constructor(name = "Default", id = null) {
             this.name = name;
-            this.id = Encounter.getIdFriendlyName(name);
+            this.id = id != null ? id : Encounter.getIdFriendlyName(name);
             this.elements = [];
         }
 
 
         static getIdFriendlyName(name)
         {
-            return name.toLowerCase().split(/\s/).filter((s) => s.length > 0).join("-")
+            return "encounter-" + name.toLowerCase().split(/[^a-z0-9]/).filter((s) => s.length > 0).join("-")
         }
     }
 
@@ -48,9 +48,16 @@
         addEncounter(name)
         {
             let newId = Encounter.getIdFriendlyName(name);
-            if (this.encounters.find(e => e.id === newId) != null) return null;
+            if (this.encounters.find(e => e.name === name) != null) return null;
 
-            let newEncounter = new Encounter(name);
+            if (this.encounters.find(e => e.id === newId) != null) {
+                let i = 0;
+                while (this.encounters.find(e => e.id === `${newId}${i}`) != null)
+                    i++;
+                newId = `${newId}${i}`;
+            }
+
+            let newEncounter = new Encounter(name, newId);
             this.encounters.push(newEncounter);
             return newEncounter
         }

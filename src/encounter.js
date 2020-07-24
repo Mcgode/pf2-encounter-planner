@@ -6,15 +6,15 @@
 
 export class Encounter
 {
-    constructor(name = "Default") {
+    constructor(name = "Default", id = null) {
         this.name = name
-        this.id = Encounter.getIdFriendlyName(name)
+        this.id = id != null ? id : Encounter.getIdFriendlyName(name)
         this.elements = []
     }
 
 
     static getIdFriendlyName(name)
     {
-        return name.toLowerCase().split(/\s/).filter((s) => s.length > 0).join("-")
+        return "encounter-" + name.toLowerCase().split(/[^a-z0-9]/).filter((s) => s.length > 0).join("-")
     }
 }
