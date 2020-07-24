@@ -58,6 +58,33 @@
                     </div>
                 </div>
             </div>
+
+            <div class="modal fade" id="renameEncounterModal" tabindex="-1" role="dialog" aria-labelledby="renameEncounterModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="renameEncounterModalLabel">Rename the encounter</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="renameEncounterForm" action="javascript:renameEncounter(encounterNewName.value)">
+                                <div class="form-group">
+                                    <label for="encounterNewName" class="col-form-label">Encounter name:</label>
+                                    <input type="text" class="form-control" id="encounterNewName" name="encounterNewName">
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" onclick="document.forms['renameEncounterForm'].submit()">
+                                Rename encounter
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="tab-pane fade" id="history" role="tabpanel" aria-labelledby="history-tab">
@@ -74,10 +101,16 @@
 
     <script>
         let session = new PF2EncounterPlanner.Session()
+        let selectedEncounter = null
 
         let addEncounterModal = $('#addEncounterModal');
         addEncounterModal.on('shown.bs.modal', function() {
             $("#addEncounterForm input").first().focus()
+        });
+
+        let renameEncounterModal = $('#renameEncounterModal')
+        renameEncounterModal.on('shown.bs.modal', function() {
+            $("#renameEncounterForm input").first().focus()
         });
 
 
@@ -110,22 +143,41 @@
             accordion.append(
                 $("<div></div>")
                     .addClass('card')
+                    .prop('id', `${encounter.id}-card`)
                     .append(
                     $("<div></div>")
                         .addClass('card-header')
                         .prop('id', `${encounter.id}-card-header`)
                         .append(
                             $("<h2></h2>")
-                                .addClass("mb-0")
+                                .addClass("mb-0 accordion-card-header")
                                 .append(
                                     $('<button></button>')
-                                        .addClass('btn btn-block collapsed text-left')
+                                        .addClass('btn collapsed text-left largest-button')
                                         .prop('type', 'button')
+                                        .attr('id', `${encounter.id}-card-header-button`)
                                         .attr('data-toggle', 'collapse')
                                         .attr('data-target', `#${collapseId}`)
                                         .attr('aria-expanded', 'false')
                                         .attr('aria-controls', collapseId)
-                                        .text(encounter.name)
+                                        .text(encounter.name),
+                                    $('<button></button>')
+                                        .addClass('btn btn-outline-info btn-pad')
+                                        .prop('type', 'button')
+                                        .text("Rename")
+                                        .click(_ => {
+                                            selectedEncounter = encounter
+                                            renameEncounterModal.modal('show')
+                                            $('#renameEncounterForm input').first().val(encounter.name)
+                                        }),
+                                    $('<button></button>')
+                                        .addClass('btn btn-outline-danger')
+                                        .prop('type', 'button')
+                                        .text("Delete")
+                                        .click(_ => {
+                                            session.removeEncounter(encounter)
+                                            $(`#${encounter.id}-card`).remove()
+                                        })
                                 )
                         ),
                     $(`<div aria-labelledby='${encounter.id}-card-header' data-parent="#encountersAccordion"></div>`)
@@ -138,6 +190,21 @@
                         )
                 )
             )
+        }
+
+
+        function renameEncounter(name)
+        {
+            if (name != null && name.trim().length > 0) {
+                if (session.renameEncounter(selectedEncounter.name, name))
+                {
+                    let id = selectedEncounter.id
+
+                    $(`#${id}-card-header h2 button`).first().text(selectedEncounter.name)
+                }
+            }
+
+            renameEncounterModal.modal('hide')
         }
 
         Sortable.create(document.getElementById('encountersAccordion'), {

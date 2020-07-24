@@ -11,3 +11,17 @@ body {
 #encountersAccordion {
     margin: 2em 0;
 }
+
+.accordion-card-header {
+    display: flex;
+    flex-direction: row;
+    width: available;
+}
+
+.largest-button {
+    flex-grow: 1;
+}
+
+.btn-pad {
+    margin: 0 1em;
+}
