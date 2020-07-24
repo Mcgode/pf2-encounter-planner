@@ -6,6 +6,9 @@
 
 import {FightComponent} from "./fight_component";
 import {ComponentType} from "./component_types";
+import {AccomplishmentComponent} from "./accomplishment_component";
+import {HazardComponent} from "./hazard_component";
+import {CustomComponent} from "./custom_component";
 
 
 export class EncounterElement
@@ -40,7 +43,17 @@ export class EncounterElement
         if (data.component != null) {
             switch (data.component.type) {
                 case ComponentType.FIGHT:
-                    result.component = FightComponent.importFromJSON(data.component)
+                    result.component = FightComponent.importFromJSON(data.component);
+                    break;
+                case ComponentType.ACCOMPLISHMENT:
+                    result.component = AccomplishmentComponent.importFromJSON(data.component);
+                    break;
+                case ComponentType.HAZARD:
+                    result.component = HazardComponent.importFromJSON(data.component);
+                    break;
+                case ComponentType.CUSTOM:
+                    result.component = CustomComponent.importFromJSON(data.component);
+                    break;
             }
         }
 
