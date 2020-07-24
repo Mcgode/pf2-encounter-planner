@@ -92,6 +92,12 @@
             this.encounters.splice(oldIndex, 1);
             this.encounters.splice(newIndex, 0, e);
         }
+
+
+        removeEncounter(encounter)
+        {
+            this.encounters.splice(this.encounters.findIndex(e => e.id === encounter.id), 1);
+        }
     }
 
     /**
