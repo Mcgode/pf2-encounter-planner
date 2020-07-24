@@ -20,6 +20,14 @@ export class Encounter
     }
 
 
+    moveElement(oldIndex, newIndex)
+    {
+        let e = this.elements[oldIndex]
+        this.elements.splice(oldIndex, 1)
+        this.elements.splice(newIndex, 0, e)
+    }
+
+
     exportToJSON()
     {
         let object = {

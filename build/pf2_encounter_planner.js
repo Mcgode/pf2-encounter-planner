@@ -73,6 +73,8 @@
             for (let creature of this.creatures) {
                 object.creatures.push(creature.exportToJSON());
             }
+
+            return object
         }
 
 
@@ -207,6 +209,14 @@
         static getIdFriendlyName(name)
         {
             return "encounter-" + name.toLowerCase().split(/[^a-z0-9]/).filter((s) => s.length > 0).join("-")
+        }
+
+
+        moveElement(oldIndex, newIndex)
+        {
+            let e = this.elements[oldIndex];
+            this.elements.splice(oldIndex, 1);
+            this.elements.splice(newIndex, 0, e);
         }
 
 
