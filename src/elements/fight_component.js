@@ -1,17 +1,14 @@
 /**
- * @file fight_element.js
+ * @file fight_component.js
  * @author Max Godefroy <max@godefroy.net>
  */
+import {ComponentType} from "./component_types";
 
 
-import EncounterElement from "./encounter_element";
-
-
-export class FightElement extends EncounterElement
+export class FightComponent
 {
-    constructor(name) {
-        super(name);
-
+    constructor() {
+        this.type = ComponentType.FIGHT
         this.creatures = []
     }
 
@@ -50,6 +47,27 @@ export class FightElement extends EncounterElement
         }
         return minKey == null ? EncounterRating.IMPOSSIBLE : minKey
     }
+
+
+    exportToJSON() {
+        let object = {
+            type: ComponentType.FIGHT,
+            creatures: []
+        }
+
+        for (let creature of this.creatures) {
+            object.creatures.push(creature.exportToJSON())
+        }
+    }
+
+
+    static importFromJSON(data) {
+        let result = new FightComponent()
+        for (let c of data.creatures) {
+            result.creatures.push(Creature.importFromJSON(c))
+        }
+        return result
+    }
 }
 
 
@@ -60,6 +78,22 @@ export class Creature
         this.level = level == null ? 0 : level
         this.amount = amount == null ? 1 : amount
         this.link = link
+    }
+
+
+    exportToJSON()
+    {
+        return {
+            name: this.name,
+            level: this.level,
+            amount: this.amount,
+            link: this.link
+        }
+    }
+
+
+    static importFromJSON(data) {
+        return new Creature(data.name, data.leadingComments, data.amount, data.link)
     }
 }
 

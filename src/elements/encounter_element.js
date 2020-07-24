@@ -4,13 +4,16 @@
  */
 
 
-// import {FightElement} from "./fight_element";
+import {FightComponent} from "./fight_component";
+import {ComponentType} from "./component_types";
 
-export default class EncounterElement
+
+export class EncounterElement
 {
     constructor(name) {
         this.name = name
         this.id = null
+        this.component = null
     }
 
     registerToSession(session)
@@ -20,18 +23,27 @@ export default class EncounterElement
         } while (session.isIdUsed(this.id))
     }
 
+
     exportToJSON() {
-        return { name: this.name, id: this.id }
+        return {
+            name: this.name,
+            id: this.id,
+            component: this.component == null ? null : this.component.exportToJSON()
+        }
     }
+
 
     static importFromJSON(data) {
         let result = new EncounterElement(data.name)
         result.id = data.id
+
+        if (data.component != null) {
+            switch (data.component.type) {
+                case ComponentType.FIGHT:
+                    result.component = FightComponent.importFromJSON(data.component)
+            }
+        }
+
         return result
     }
-}
-
-
-export const ElementType = {
-    FIGHT_ELEMENT: 'fight_element'
 }

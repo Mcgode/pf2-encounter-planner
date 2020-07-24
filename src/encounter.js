@@ -2,7 +2,7 @@
  * @file encounter.js
  * @author Max Godefroy <max@godefroy.net>
  */
-import EncounterElement from "./elements/encounter_element";
+import { EncounterElement } from "./elements/encounter_element";
 
 
 export class Encounter

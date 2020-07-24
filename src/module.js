@@ -11,6 +11,5 @@ export { Session }
 
 export { Encounter } from "./encounter";
 
-import EncounterElement from "./elements/encounter_element";
-export { EncounterElement }
-export { FightElement, Creature, EncounterRating } from "./elements/fight_element";
+export { EncounterElement } from "./elements/encounter_element";
+export { FightComponent, Creature, EncounterRating } from "./elements/fight_component";
