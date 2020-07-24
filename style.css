@@ -29,3 +29,7 @@ body {
 .btn-top-margin {
     margin-top: 1em;
 }
+
+#elementTabContent {
+    padding: 1em 0;
+}

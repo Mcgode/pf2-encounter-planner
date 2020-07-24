@@ -11,11 +11,17 @@
 
 
     const ComponentType = {
-        FIGHT: 'fight_component'
+        FIGHT: 'fight_component',
+        ACCOMPLISHMENT: "achievement_component",
+        HAZARD: "hazard_component",
+        CUSTOM: "custom_component"
     };
 
     const ComponentTypeName = {
-        fight_component: "Fight"
+        fight_component: "Fight",
+        accomplishment_component: "Achievement",
+        hazard_component: "Hazard",
+        custom_component: "Custom",
     };
 
     /**
@@ -150,6 +156,180 @@
     };
 
     /**
+     * @file accomplishment_component.js
+     * @author Max Godefroy <max@godefroy.net>
+     */
+
+
+    class AccomplishmentComponent
+    {
+        constructor(level = AccomplishmentLevel.MINOR) {
+            this.type = ComponentType.ACCOMPLISHMENT;
+            this.level = level;
+        }
+
+
+        getEncounterXpPerPlayer(_ = null, __ = null) {
+            switch (this.level) {
+                case AccomplishmentLevel.MAJOR:
+                    return 80
+                case AccomplishmentLevel.MODERATE:
+                    return 30
+                default:
+                    return 10
+            }
+        }
+
+
+        exportToJSON()
+        {
+            return {
+                type: this.type,
+                level: this.level,
+            }
+        }
+
+
+        static importFromJSON(data)
+        {
+            return new AccomplishmentComponent(data.level)
+        }
+    }
+
+
+    const AccomplishmentLevel = {
+        MINOR: "Minor accomplishment",
+        MODERATE: "Moderate accomplishment",
+        MAJOR: "Major accomplishment"
+    };
+
+    /**
+     * @file hazard_component.js
+     * @author Max Godefroy <max@godefroy.net>
+     */
+
+    class HazardComponent {
+        constructor() {
+            this.type = ComponentType.HAZARD;
+            this.hazards = [];
+        }
+
+
+        getEncounterXpPerPlayer(playersLevel = 1, _ = null)
+        {
+            let xpTotal = 0;
+
+            for (let hazard of this.hazards) {
+                let relativeLvl = hazard.level - playersLevel;
+
+                if (relativeLvl > 4) return null
+
+                if (relativeLvl >= -4) {
+                    xpTotal += hazard.amount * XpPerRelativeLevel$1[relativeLvl.toString()] * (hazard.isComplex ? 5 : 1);
+                }
+            }
+
+            return xpTotal
+        }
+
+
+        exportToJSON() {
+            let object = {
+                type: ComponentType.HAZARD,
+                hazards: []
+            };
+
+            for (let creature of this.hazards) {
+                object.hazards.push(creature.exportToJSON());
+            }
+
+            return object
+        }
+
+
+        static importFromJSON(data) {
+            let result = new HazardComponent();
+            for (let c of data.creatures) {
+                result.hazards.push(Hazard.importFromJSON(c));
+            }
+            return result
+        }
+    }
+
+
+    class Hazard
+    {
+        constructor(name, level, isComplex, amount, link = null) {
+            this.name = name;
+            this.level = level == null ? 0 : level;
+            this.isComplex = isComplex;
+            this.amount = amount == null ? 1 : amount;
+            this.link = link;
+        }
+
+
+        exportToJSON()
+        {
+            return {
+                name: this.name,
+                level: this.level,
+                isComplex: this.isComplex,
+                amount: this.amount,
+                link: this.link
+            }
+        }
+
+
+        static importFromJSON(data) {
+            return new Hazard(data.name, data.leadingComments, data.isComplex, data.amount, data.link)
+        }
+    }
+
+
+    const XpPerRelativeLevel$1 = {
+        "-4": 2,
+        "-3": 3,
+        "-2": 4,
+        "-1": 6,
+        "0": 8,
+        "1": 12,
+        "2": 16,
+        "3": 24,
+        "4": 32
+    };
+
+    /**
+     * @file custom_component.js
+     * @author Max Godefroy <max@godefroy.net>
+     */
+
+
+    class CustomComponent
+    {
+        constructor(xp) {
+            this.type = ComponentType.CUSTOM;
+            this.xp = xp;
+        }
+
+        getEncounterXpPerPlayer(_ = null, __ = null) {
+            return this.xp
+        }
+
+
+        exportToJSON() {
+            return {
+                type: this.type,
+                xp: this.xp
+            }
+        }
+
+
+        static importFromJSON(data) {
+            return new CustomComponent(data.xp)
+        }
+    }
+
+    /**
      * @file encounter_element.js
      * @author Max Godefroy <max@godefroy.net>
      */
@@ -188,6 +368,16 @@
                 switch (data.component.type) {
                     case ComponentType.FIGHT:
                         result.component = FightComponent.importFromJSON(data.component);
+                        break;
+                    case ComponentType.ACCOMPLISHMENT:
+                        result.component = AccomplishmentComponent.importFromJSON(data.component);
+                        break;
+                    case ComponentType.HAZARD:
+                        result.component = HazardComponent.importFromJSON(data.component);
+                        break;
+                    case ComponentType.CUSTOM:
+                        result.component = CustomComponent.importFromJSON(data.component);
+                        break;
                 }
             }
 
@@ -389,6 +579,7 @@
     exports.FightComponent = FightComponent;
     exports.Creature = Creature;
     exports.EncounterRating = EncounterRating;
+    exports.AccomplishmentLevel = AccomplishmentLevel;
     exports.ComponentType = ComponentType;
     exports.ComponentTypeName = ComponentTypeName;
 

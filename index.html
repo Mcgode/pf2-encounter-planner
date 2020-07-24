@@ -85,6 +85,80 @@
                     </div>
                 </div>
             </div>
+
+            <div class="modal fade" id="setElementModal" tabindex="-1" role="dialog" aria-labelledby="setElementModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="setElementModalLabel">Add an encounter element</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="setElementModalForm" action="javascript:console.log(elementName.value)">
+                                <div class="form-group">
+                                    <label for="elementName" class="col-form-label">Encounter element name:</label>
+                                    <input type="text" class="form-control" id="elementName" name="elementName">
+                                </div>
+
+                                <ul class="nav nav-tabs" id="elementTab" role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" id="custom-tab" data-toggle="tab" href="#custom" role="tab" aria-controls="custom" aria-selected="true">Custom element</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="fight-tab" data-toggle="tab" href="#fight" role="tab" aria-controls="fight" aria-selected="false">Fight</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="accomplishment-tab" data-toggle="tab" href="#accomplishment" role="tab" aria-controls="accomplishment" aria-selected="false">Accomplishment</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="hazard-tab" data-toggle="tab" href="#hazard" role="tab" aria-controls="hazard" aria-selected="false">Hazard</a>
+                                    </li>
+                                </ul>
+
+                                <div class="tab-content" id="elementTabContent">
+                                    <div class="tab-pane fade show active" id="custom" role="tabpanel" aria-labelledby="custom-tab">
+                                        <div class="form-group">
+                                            <label for="elementCustomXp" class="col-form-label">Custom XP amount:</label>
+                                            <input type="number" class="form-control" id="elementCustomXp" name="elementCustomXp">
+                                        </div>
+                                    </div>
+
+                                    <div class="tab-pane fade" id="fight" role="tabpanel" aria-labelledby="fight-tab">
+                                        <div class="list-group" id="elementCreatureList"></div>
+                                        <button class="btn btn-outline-primary btn-top-margin">
+                                            Add more creatures
+                                        </button>
+                                    </div>
+
+                                    <div class="tab-pane fade" id="accomplishment" role="tabpanel" aria-labelledby="accomplishment-tab">
+                                        <label for="elementAccomplishmentLevel" class="col-form-label">Accomplishment level:</label>
+                                        <select id="elementAccomplishmentLevel" name="elementAccomplishmentLevel">
+                                            <option value="Minor accomplishment">Minor accomplishment</option>
+                                            <option value="Moderate accomplishment">Moderate accomplishment</option>
+                                            <option value="Major accomplishment">Major accomplishment</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="tab-pane fade" id="hazard" role="tabpanel" aria-labelledby="hazard-tab">
+                                        <div class="list-group" id="elementHazardList"></div>
+                                        <button class="btn btn-outline-primary btn-top-margin">
+                                            Add more hazards
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" id="setElementModalConfirm" onclick="document.forms['setElementModalForm'].submit()">
+                                Add element
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="tab-pane fade" id="history" role="tabpanel" aria-labelledby="history-tab">
@@ -102,6 +176,8 @@
     <script>
         let session = PF2EncounterPlanner.Session.makeSession()
         let selectedEncounter = null
+        let selectedElement = null
+        let selectedTab = PF2EncounterPlanner.ComponentType.CUSTOM
 
         let addEncounterModal = $('#addEncounterModal');
         addEncounterModal.on('shown.bs.modal', function() {
@@ -112,6 +188,16 @@
         renameEncounterModal.on('shown.bs.modal', function() {
             $("#renameEncounterForm input").first().focus()
         });
+
+        let setElementModal = $('#setElementModal')
+        setElementModal.on('shown.bs.modal', function() {
+            $('#setElementModalForm input').first().focus()
+        })
+
+        $("#custom-tab").on('show.bs.tab', _ => selectedTab = PF2EncounterPlanner.ComponentType.CUSTOM)
+        $("#fight-tab").on('show.bs.tab', _ => selectedTab = PF2EncounterPlanner.ComponentType.FIGHT)
+        $("#accomplishment-tab").on('show.bs.tab', _ => selectedTab = PF2EncounterPlanner.ComponentType.ACCOMPLISHMENT)
+        $("#hazard-tab").on('show.bs.tab', _ => selectedTab = PF2EncounterPlanner.ComponentType.HAZARD)
 
 
         function addEncounter(name) {
@@ -194,9 +280,7 @@
                                         .addClass('btn btn-outline-primary btn-top-margin')
                                         .prop('type', 'button')
                                         .text("Add encounter element")
-                                        .click(_ => {
-
-                                        })
+                                        .click(_ => showSettingElement(true))
                                 )
                         )
                 )
@@ -228,6 +312,9 @@
                     if (element.component.type === PF2EncounterPlanner.ComponentType.FIGHT) {
                         let amount = element.component.creatures.length
                         text += ` (${amount} creature${amount === 1 ? "" : "s"}, ${xp == null ? "?" : Math.floor(xp)} xp)`
+                    } else if (element.component.type === PF2EncounterPlanner.ComponentType.HAZARD) {
+                        let amount = element.component.hazards.length
+                        text += ` (${amount} hazard${amount === 1 ? "" : "s"}, ${xp == null ? "?" : Math.floor(xp)} xp)`
                     } else {
                         text += ` (${xp == null ? "?" : Math.floor(xp)} xp)`
                     }
@@ -238,7 +325,10 @@
                         .addClass('list-group-item')
                         .prop('id', element.id + "-item")
                         .html(text)
-                        .click(_ => {})
+                        .click(_ => {
+                            selectedElement = element
+                            showSettingElement()
+                        })
                 )
             }
         }
@@ -257,6 +347,42 @@
 
             renameEncounterModal.modal('hide')
         }
+
+
+        function showSettingElement(adding = false) {
+            if (adding)
+                selectedElement = null
+
+            $('#setElementModalLabel').text(adding ? "Add a new encounter element" : "Edit encounter element")
+            $('#setElementModalConfirm').text(adding ? "Add encounter element" : "Edit encounter element")
+
+            $('#elementName').val(selectedElement == null ? "" : selectedElement.name)
+
+            let elementCustomXp = $('#elementCustomXp').val(null)
+            let elementAccomplishmentLevel = $('#elementAccomplishmentLevel').val(PF2EncounterPlanner.AccomplishmentLevel.MINOR)
+
+            $("#setElementModal").modal('show')
+
+            if (selectedElement != null && selectedElement.component != null) {
+                switch (selectedElement.component.type) {
+                    case PF2EncounterPlanner.ComponentType.CUSTOM:
+                        elementCustomXp.val(selectedElement.component.xp)
+                        $('#custom-tab').tab('show')
+                        break;
+                    case PF2EncounterPlanner.ComponentType.FIGHT:
+                        $('#fight-tab').tab('show')
+                        break;
+                    case PF2EncounterPlanner.ComponentType.ACCOMPLISHMENT:
+                        elementAccomplishmentLevel.val(selectedElement.component.level)
+                        $('#accomplishment-tab').tab('show')
+                        break;
+                    case PF2EncounterPlanner.ComponentType.HAZARD:
+                        $('#hazard-tab').tab('show')
+                        break;
+                }
+            }
+        }
+
 
         Sortable.create(document.getElementById('encountersAccordion'), {
             animation: 150,
