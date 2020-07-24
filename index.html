@@ -2,11 +2,140 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>PF2e Encounter Planner</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>PF2e Encounter Planner</title><link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 </head>
 
 <body>
-    <script src="build/pf2_encounter_planner.js"></script>
+    <!-- Body content -->
+    <ul class="nav nav-tabs" id="mainTab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="planner-tab" data-toggle="tab" href="#planner" role="tab" aria-controls="planner" aria-selected="true">Encounter planner</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="history-tab" data-toggle="tab" href="#history" role="tab" aria-controls="history" aria-selected="false">Encounter history</a>
+        </li>
+    </ul>
 
+    <div class="tab-content" id="mainContent">
+        <div class="tab-pane fade show active" id="planner" role="tabpanel" aria-labelledby="planner-tab">
+            <h1>Encounter planner</h1>
+
+            <div class="accordion" id="encountersAccordion">
+            </div>
+
+            <button class="btn btn-outline-primary" data-toggle="modal" data-target="#addEncounterModal">
+                Add new encounter
+            </button>
+
+            <div class="modal fade" id="addEncounterModal" tabindex="-1" role="dialog" aria-labelledby="addEncounterModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addEncounterModalLabel">Add a new encounter</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="addEncounterForm" action="javascript:addEncounter(encounterName.value)">
+                                <div class="form-group">
+                                    <label for="encounterName" class="col-form-label">Encounter name:</label>
+                                    <input type="text" class="form-control" id="encounterName" name="encounterName">
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" onclick="document.forms['addEncounterForm'].submit()">
+                                Add encounter
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="history" role="tabpanel" aria-labelledby="history-tab">
+            Encounter history
+        </div>
+    </div>
+
+    <!-- Scripts loaders -->
+    <script src="build/pf2_encounter_planner.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+
+    <script>
+        let session = new PF2EncounterPlanner.Session()
+
+        let addEncounterModal = $('#addEncounterModal');
+        addEncounterModal.on('shown.bs.modal', function() {
+            $("#addEncounterForm input").first().focus()
+        });
+
+
+        function addEncounter(name) {
+            if (name != null && name.length > 0)
+                addEncounterToAccordion(session.addEncounter(name))
+            $('#addEncounterForm input').val("")
+            addEncounterModal.modal('hide')
+
+        }
+
+
+        function updatePlanner()
+        {
+            let accordion = $('#encountersAccordion')
+            accordion.children().empty()
+
+            for (let encounter of session.encounters) {
+                addEncounterToAccordion(encounter)
+            }
+        }
+
+
+        function addEncounterToAccordion(encounter)
+        {
+            if (encounter == null) return;
+
+            let accordion = $('#encountersAccordion')
+            let collapseId = `${encounter.name}-card-collapse`
+            accordion.append(
+                $("<div></div>").addClass('card').append(
+                    $("<div></div>")
+                        .addClass('card-header')
+                        .prop('id', `${encounter.name}-card-header`)
+                        .append(
+                            $("<h2></h2>")
+                                .addClass("mb-0")
+                                .append(
+                                    $('<button></button>')
+                                        .addClass('btn btn-block collapsed text-left')
+                                        .prop('type', 'button')
+                                        .attr('data-toggle', 'collapse')
+                                        .attr('data-target', `#${collapseId}`)
+                                        .attr('aria-expanded', 'false')
+                                        .attr('aria-controls', collapseId)
+                                        .text(encounter.name)
+                                )
+                        ),
+                    $(`<div aria-labelledby='${encounter.name}-card-header' data-parent="#encountersAccordion"></div>`)
+                        .addClass('collapse')
+                        .prop('id', collapseId)
+                        .append(
+                            $('<div></div>')
+                                .addClass('card-body')
+                                .append($("<p></p>").text(encounter.name))
+                        )
+                )
+            )
+        }
+    </script>
 </body>
 </html>
