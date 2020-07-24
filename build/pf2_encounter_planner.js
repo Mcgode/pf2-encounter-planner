@@ -14,6 +14,10 @@
         FIGHT: 'fight_component'
     };
 
+    const ComponentTypeName = {
+        fight_component: "Fight"
+    };
+
     /**
      * @file fight_component.js
      * @author Max Godefroy <max@godefroy.net>
@@ -385,6 +389,8 @@
     exports.FightComponent = FightComponent;
     exports.Creature = Creature;
     exports.EncounterRating = EncounterRating;
+    exports.ComponentType = ComponentType;
+    exports.ComponentTypeName = ComponentTypeName;
 
     Object.defineProperty(exports, '__esModule', { value: true });
 

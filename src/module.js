@@ -13,3 +13,5 @@ export { Encounter } from "./encounter";
 
 export { EncounterElement } from "./elements/encounter_element";
 export { FightComponent, Creature, EncounterRating } from "./elements/fight_component";
+
+export {ComponentType, ComponentTypeName} from "./elements/component_types";

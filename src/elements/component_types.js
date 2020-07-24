@@ -7,3 +7,7 @@
 export const ComponentType = {
     FIGHT: 'fight_component'
 }
+
+export const ComponentTypeName = {
+    fight_component: "Fight"
+}

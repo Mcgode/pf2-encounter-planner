@@ -216,16 +216,28 @@
 
         function updateEncounterElements(encounter)
         {
-            console.log(encounter)
             let list = $(`#${encounter.id}-card-list`).empty()
 
             for (let element of encounter.elements) {
-                console.log(element)
+                let text = element.name
+                text = `<strong>[${element.component == null ? "?" : PF2EncounterPlanner.ComponentTypeName[element.component.type] || "?"}]</strong> ` + text
+
+                if (element.component != null) {
+                    let xp = element.component.getEncounterXpPerPlayer()
+
+                    if (element.component.type === PF2EncounterPlanner.ComponentType.FIGHT) {
+                        let amount = element.component.creatures.length
+                        text += ` (${amount} creature${amount === 1 ? "" : "s"}, ${xp == null ? "?" : Math.floor(xp)} xp)`
+                    } else {
+                        text += ` (${xp == null ? "?" : Math.floor(xp)} xp)`
+                    }
+                }
+
                 list.append(
                     $('<a></a>')
                         .addClass('list-group-item')
                         .prop('id', element.id + "-item")
-                        .text(element.name)
+                        .html(text)
                         .click(_ => {})
                 )
             }
