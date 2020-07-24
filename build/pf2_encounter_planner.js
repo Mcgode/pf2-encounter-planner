@@ -77,6 +77,14 @@
             }
             return false
         }
+
+
+        moveEncounterIndex(oldIndex, newIndex)
+        {
+            let e = this.encounters[oldIndex];
+            this.encounters.splice(oldIndex, 1);
+            this.encounters.splice(newIndex, 0, e);
+        }
     }
 
     /**
