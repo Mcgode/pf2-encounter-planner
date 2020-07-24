@@ -186,10 +186,49 @@
                         .append(
                             $('<div></div>')
                                 .addClass('card-body')
-                                .append($("<p></p>").text(encounter.name))
+                                .append(
+                                    $('<div></div>')
+                                        .addClass('list-group')
+                                        .prop('id', `${encounter.id}-card-list`),
+                                    $('<button></button>')
+                                        .addClass('btn btn-outline-primary btn-top-margin')
+                                        .prop('type', 'button')
+                                        .text("Add encounter element")
+                                        .click(_ => {
+
+                                        })
+                                )
                         )
                 )
             )
+
+            Sortable.create(document.getElementById(`${encounter.id}-card-list`), {
+                animation: 150,
+                onEnd: event => {
+                    encounter.moveElement(event.oldIndex, event.newIndex)
+                    session.saveSession()
+                }
+            })
+
+            updateEncounterElements(encounter)
+        }
+
+
+        function updateEncounterElements(encounter)
+        {
+            console.log(encounter)
+            let list = $(`#${encounter.id}-card-list`).empty()
+
+            for (let element of encounter.elements) {
+                console.log(element)
+                list.append(
+                    $('<a></a>')
+                        .addClass('list-group-item')
+                        .prop('id', element.id + "-item")
+                        .text(element.name)
+                        .click(_ => {})
+                )
+            }
         }
 
 

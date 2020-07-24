@@ -25,3 +25,7 @@ body {
 .btn-pad {
     margin: 0 1em;
 }
+
+.btn-top-margin {
+    margin-top: 1em;
+}
