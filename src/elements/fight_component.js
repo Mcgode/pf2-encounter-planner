@@ -58,6 +58,8 @@ export class FightComponent
         for (let creature of this.creatures) {
             object.creatures.push(creature.exportToJSON())
         }
+
+        return object
     }
 
 
