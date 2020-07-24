@@ -94,6 +94,16 @@
         }
 
 
+        renameEncounter(oldName, newName)
+        {
+            let encounter = this.encounters.find(e => e.name === oldName);
+            if (this.encounters.find(e => e.name === newName) != null || encounter == null) return false;
+
+            encounter.name = newName;
+            return true
+        }
+
+
         removeEncounter(encounter)
         {
             this.encounters.splice(this.encounters.findIndex(e => e.id === encounter.id), 1);
