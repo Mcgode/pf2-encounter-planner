@@ -350,14 +350,29 @@
                 let text = getElementText(element)
 
                 list.append(
-                    $('<a></a>')
+                    $('<div></div>')
                         .addClass('list-group-item')
-                        .prop('id', element.id + "-item")
-                        .html(text)
-                        .click(_ => {
-                            selectedElement = element
-                            showSettingElement()
-                        })
+                        .css("display", "flex")
+                        .css("flex-direction", "row")
+                        .append(
+                            $('<button></button>')
+                                .addClass('btn largest-button text-left')
+                                .prop('id', element.id + "-item")
+                                .html(text)
+                                .click(_ => {
+                                    selectedElement = element
+                                    showSettingElement()
+                                }),
+                            $('<button></button>')
+                                .addClass('btn btn-outline-danger')
+                                .text("Delete")
+                                .click(_ => {
+                                    let index = encounter.elements.findIndex(e => e.id === element.id)
+                                    encounter.elements.splice(index, 1)
+                                    $(`#${element.id}-item`).parent().remove()
+                                    session.saveSession()
+                                })
+                        )
                 )
             }
         }
@@ -440,7 +455,7 @@
             }
 
             if (tmpFightComponent == null) tmpFightComponent = new PF2EncounterPlanner.FightComponent()
-            if (tmpHazardComponent == null) tmpHazardComponent= new PF2EncounterPlanner.HazardComponent()
+            if (tmpHazardComponent == null) tmpHazardComponent = new PF2EncounterPlanner.HazardComponent()
         }
 
 
