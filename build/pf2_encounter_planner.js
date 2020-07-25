@@ -45,12 +45,14 @@
             let xpTotal = 0;
 
             for (let creature of this.creatures) {
-                let relativeLvl = creature.level - this.expectedLevel;
+                if (creature.level != null && creature.amount != null) {
+                    let relativeLvl = creature.level - this.expectedLevel;
 
-                if (relativeLvl > 4) return EncounterRating.IMPOSSIBLE
+                    if (relativeLvl > 4) return null
 
-                if (relativeLvl >= -4) {
-                    xpTotal += creature.amount * XpPerRelativeLevel[relativeLvl.toString()];
+                    if (relativeLvl >= -4) {
+                        xpTotal += creature.amount * XpPerRelativeLevel[relativeLvl.toString()];
+                    }
                 }
             }
 
@@ -63,6 +65,7 @@
         getEncounterRating()
         {
             let xpPerPlayer = this.getEncounterXpPerPlayer();
+            if (xpPerPlayer == null) return EncounterRating.IMPOSSIBLE
 
             let minValue = 200;
             let minKey = null;
@@ -104,8 +107,9 @@
         getNewCreatureId()
         {
             let found = false;
+            let id;
             do {
-                let id = Math.floor(Number.MAX_SAFE_INTEGER * Math.random());
+                id = "creature-" + Math.floor(Number.MAX_SAFE_INTEGER * Math.random());
                 for (let creature of this.creatures) {
                     if (creature.id === id) { found = true; break }
                 }
@@ -122,7 +126,7 @@
             this.level = level;
             this.amount = amount;
             this.link = link;
-            this.id = null;
+            this.id = id;
         }
 
 
@@ -139,7 +143,7 @@
 
 
         static importFromJSON(data) {
-            return new Creature(data.name, data.leadingComments, data.amount, data.link, data.id)
+            return new Creature(data.name, data.level, data.amount, data.link, data.id)
         }
     }
 

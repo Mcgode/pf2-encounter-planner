@@ -153,9 +153,9 @@
                                             </div>
                                         </div>
 
-                                        <div class="list-group" id="elementCreatureList"></div>
+                                        <div class="accordion" id="elementCreatureAccordion"></div>
 
-                                        <button class="btn btn-outline-primary btn-top-margin">
+                                        <button class="btn btn-outline-primary btn-top-margin" id="fightAddCreature">
                                             Add more creatures
                                         </button>
                                     </div>
@@ -236,7 +236,6 @@
                 addEncounterToAccordion(session.addEncounter(name.trim()))
             $('#addEncounterForm input').val("")
             addEncounterModal.modal('hide')
-
         }
 
 
@@ -385,6 +384,7 @@
             let expectedPlayers = $(`#fightPlayerExpectedAmount`).val(session.params.players.length)
             let fightXp = $('#fightXpLabel').text("0xp")
             setRating(PF2EncounterPlanner.EncounterRating.TRIVIAL)
+            $('#elementCreatureAccordion').empty()
             let elementAccomplishmentLevel = $('#elementAccomplishmentLevel').val(PF2EncounterPlanner.AccomplishmentLevel.MINOR)
 
             $("#setElementModal").modal('show')
@@ -403,6 +403,9 @@
                         let xp = selectedElement.component.getEncounterXpPerPlayer()
                         fightXp.text(`${xp != null ? xp : "?"}xp`)
                         setRating(selectedElement.component.getEncounterRating())
+                        for (let creature of tmpFightComponent.creatures) {
+                            addCreature(creature)
+                        }
                         break;
                     case PF2EncounterPlanner.ComponentType.ACCOMPLISHMENT:
                         elementAccomplishmentLevel.val(selectedElement.component.level)
@@ -484,6 +487,165 @@
         }
 
 
+        function updateFightInterface()
+        {
+            setRating(tmpFightComponent.getEncounterRating())
+            let xp = Math.round(selectedElement.component.getEncounterXpPerPlayer())
+            $('#fightXpLabel').text(`${xp != null ? xp : "?"}xp`)
+        }
+
+
+        function addCreature(creature)
+        {
+            let accordion = $('#elementCreatureAccordion')
+            let collapseId = `${creature.id}-card-collapse`
+            accordion.append(
+                $("<div></div>")
+                    .addClass('card')
+                    .prop('id', `${creature.id}-card`)
+                    .append(
+                        $("<div></div>")
+                            .addClass('card-header')
+                            .prop('id', `${creature.id}-card-header`)
+                            .append(
+                                $("<h2></h2>")
+                                    .addClass("mb-0 accordion-card-header")
+                                    .append(
+                                        $('<a></a>')
+                                            .addClass('btn collapsed text-left largest-button handle')
+                                            .attr('id', `${creature.id}-card-header-text`),
+                                        $('<a></a>')
+                                            .addClass('font-italic btn')
+                                            .attr('id', `${creature.id}-card-header-xp`),
+                                        $('<button></button>')
+                                            .addClass('btn btn-outline-info btn-pad')
+                                            .prop('id',  `${creature.id}-collapser`)
+                                            .attr('type', 'button')
+                                            .attr('data-toggle', 'collapse')
+                                            .attr('data-target', `#${collapseId}`)
+                                            .attr('aria-expanded', 'false')
+                                            .attr('aria-controls', collapseId)
+                                            .text("Edit"),
+                                        $('<button></button>')
+                                            .addClass('btn btn-outline-danger')
+                                            .prop('type', 'button')
+                                            .text("Delete")
+                                            .click(_ => {
+                                                let index = tmpFightComponent.creatures.findIndex(c => c.id === creature.id)
+                                                tmpFightComponent.creatures.splice(index, 1)
+                                                $(`#${creature.id}-card`).remove()
+                                            })
+                                    )
+                            ),
+                        $(`<div aria-labelledby='${creature.id}-card-header' data-parent="#elementCreatureAccordion"></div>`)
+                            .addClass('collapse')
+                            .prop('id', collapseId)
+                            .append(
+                                $('<div></div>')
+                                    .addClass('card-body')
+                                    .append(
+                                        $('<div></div>')
+                                            .addClass('form-group row')
+                                            .append(
+                                                $('<label></label>')
+                                                    .addClass('col-form-label col-sm-4')
+                                                    .text("Creature name")
+                                                    .prop('for', `${creature.id}-name`),
+                                                $('<input>')
+                                                    .addClass('col-sm-6')
+                                                    .prop('id', `${creature.id}-name`)
+                                                    .attr('type', 'text')
+                                                    .change(function () {
+                                                        creature.name = $(this).val().trim()
+                                                        setCreatureHeader(creature)
+                                                    })
+                                            ),
+                                        $('<div></div>')
+                                            .addClass('form-group row')
+                                            .append(
+                                                $('<label></label>')
+                                                    .addClass('col-form-label col-sm-4')
+                                                    .text("Creature level:")
+                                                    .prop('for', `${creature.id}-level`),
+                                                $('<input>')
+                                                    .addClass('col-sm-6')
+                                                    .prop('id', `${creature.id}-level`)
+                                                    .attr('type', 'number')
+                                                    .change(function () {
+                                                        creature.level = Math.max(-1, Math.min($(this).val(), 24))
+                                                        $(this).val(creature.level)
+                                                        updateFightInterface()
+                                                        setCreatureHeader(creature)
+                                                    })
+                                            ),
+                                        $('<div></div>')
+                                            .addClass('form-group row')
+                                            .append(
+                                                $('<label></label>')
+                                                    .addClass('col-form-label col-sm-4')
+                                                    .text("Amount of creatures:")
+                                                    .prop('for', `${creature.id}-amount`),
+                                                $('<input>')
+                                                    .addClass('col-sm-6')
+                                                    .prop('id', `${creature.id}-amount`)
+                                                    .attr('type', 'number')
+                                                    .change(function () {
+                                                        creature.amount = Math.max(1, $(this).val())
+                                                        $(this).val(creature.amount)
+                                                        updateFightInterface()
+                                                        setCreatureHeader(creature)
+                                                    })
+                                            ),
+                                        $('<div></div>')
+                                            .addClass('form-group row')
+                                            .append(
+                                                $('<label></label>')
+                                                    .addClass('col-form-label col-sm-4')
+                                                    .text("Link to monster (optional):")
+                                                    .prop('for', `${creature.id}-link`),
+                                                $('<input>')
+                                                    .addClass('col-sm-6')
+                                                    .prop('id', `${creature.id}-link`)
+                                                    .attr('type', 'text')
+                                                    .change(function () {
+                                                        creature.link = $(this).val().trim()
+                                                        setCreatureHeader(creature)
+                                                    })
+                                            )
+                                    )
+                            )
+                    )
+            )
+
+            $(`#${creature.id}-name`).val(creature.name)
+            $(`#${creature.id}-level`).val(creature.level)
+            $(`#${creature.id}-amount`).val(creature.amount)
+            $(`#${creature.id}-link`).val(creature.link)
+            setCreatureHeader(creature)
+        }
+
+
+        function setCreatureHeader(creature)
+        {
+            let htmlText = creature.name != null && creature.name.length > 0 ? creature.name : "Unnamed creature";
+
+            htmlText = `<strong>[Lvl ${creature.level != null ? creature.level : "?"}]</strong> ` + htmlText;
+
+            htmlText += ` &times; ${creature.amount != null ? creature.amount : "?"}`;
+
+            if (creature.link != null && creature.link.length > 0)
+                htmlText += ` (<a href='${creature.link}' target="_blank">link</a>)`
+            $(`#${creature.id}-card-header-text`).html(htmlText)
+
+            let tmp = tmpFightComponent.creatures
+            tmpFightComponent.creatures = [creature]
+            let xp = tmpFightComponent.getEncounterXpPerPlayer()
+            tmpFightComponent.creatures = tmp
+            $(`#${creature.id}-card-header-xp`)
+                .text((xp != null ? Math.round(xp) : "?") + "xp")
+        }
+
+
         Sortable.create(document.getElementById('encountersAccordion'), {
             animation: 150,
             onEnd: function (event) { session.moveEncounterIndex(event.oldIndex, event.newIndex) }
@@ -494,17 +656,33 @@
         $('#fightPlayerExpectedAmount').change(function() {
             tmpFightComponent.expectedPlayers = Math.max(1, $(this).val())
             $(this).val(tmpFightComponent.expectedPlayers)
-            setRating(tmpFightComponent.getEncounterRating())
-            let xp = Math.round(selectedElement.component.getEncounterXpPerPlayer())
-            $('#fightXpLabel').text(`${xp != null ? xp : "?"}xp`)
+            updateFightInterface()
         })
 
         $('#fightExpectedPlayerLevel').change(function() {
             tmpFightComponent.expectedLevel = Math.min(20, Math.max(1, $(this).val()))
             $(this).val(tmpFightComponent.expectedLevel)
-            setRating(tmpFightComponent.getEncounterRating())
-            let xp = Math.round(selectedElement.component.getEncounterXpPerPlayer())
-            $('#fightXpLabel').text(`${xp != null ? xp : "?"}xp`)
+            updateFightInterface()
+        })
+
+
+        Sortable.create(document.getElementById('elementCreatureAccordion'), {
+            animation: 150,
+            handle: '.handle',
+            onEnd: event => {
+                let e = tmpFightComponent.creatures[event.oldIndex]
+                tmpFightComponent.creatures.splice(event.oldIndex, 1)
+                tmpFightComponent.creatures.splice(event.newIndex, 0, e)
+                session.saveSession()
+            }
+        })
+
+        $('#fightAddCreature').click(_ => {
+            let creature = new PF2EncounterPlanner.Creature(null, null, null, null, tmpFightComponent.getNewCreatureId())
+            addCreature(creature)
+            tmpFightComponent.creatures.push(creature)
+
+            $(`#${creature.id}-collapser`).dropdown('show')
         })
     </script>
 </body>
