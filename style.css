@@ -33,3 +33,11 @@ body {
 #elementTabContent {
     padding: 1em 0;
 }
+
+#fightRatingSelector {
+    pointer-events: none;
+}
+
+.fight-rating-label {
+    margin-right: 1em;
+}

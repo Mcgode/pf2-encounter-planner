@@ -126,7 +126,35 @@
                                     </div>
 
                                     <div class="tab-pane fade" id="fight" role="tabpanel" aria-labelledby="fight-tab">
+                                        <div class="form-group row">
+                                            <label for="fightExpectedPlayerLevel" class="col-form-label col-sm-4">Expected player level:</label>
+                                            <input type="number" id="fightExpectedPlayerLevel" class="col-sm-6" min="1" max="20">
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <label for="fightPlayerExpectedAmount" class="col-form-label col-sm-4">Expected amount of players:</label>
+                                            <input type="number" id="fightPlayerExpectedAmount" class="col-sm-6" min="1">
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <label class="col-sm-4 col-form-label">Experience per player: </label>
+                                            <label class="col-sm-6 col-form-label"><strong id="fightXpLabel">?xp</strong></label>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="fight-rating-label">Encounter rating:</label>
+                                            <div class="btn-group" data-toggle="button" id="fightRatingSelector">
+                                                <button class="btn btn-outline-success" id="label-trivial"> Trivial </button>
+                                                <button class="btn btn-outline-info" id="label-low"> Low </button>
+                                                <button class="btn btn-outline-primary" id="label-moderate"> Moderate </button>
+                                                <button class="btn btn-outline-warning" id="label-severe"> Severe </button>
+                                                <button class="btn btn-outline-danger" id="label-extreme"> Extreme </button>
+                                                <button class="btn btn-outline-dark" id="label-impossible"> Impossible </button>
+                                            </div>
+                                        </div>
+
                                         <div class="list-group" id="elementCreatureList"></div>
+
                                         <button class="btn btn-outline-primary btn-top-margin">
                                             Add more creatures
                                         </button>
@@ -179,7 +207,7 @@
         let selectedElement = null
         let selectedTab = PF2EncounterPlanner.ComponentType.CUSTOM
 
-        let tmpCreatures = []
+        let tmpFightComponent = null
         let tmpHazards = []
 
         let addEncounterModal = $('#addEncounterModal');
@@ -345,12 +373,18 @@
             if (adding)
                 selectedElement = null
 
+            tmpFightComponent = null
+
             $('#setElementModalLabel').text(adding ? "Add a new encounter element" : "Edit encounter element")
             $('#setElementModalConfirm').text(adding ? "Add encounter element" : "Edit encounter element")
 
             $('#elementName').val(selectedElement == null ? "" : selectedElement.name)
 
             let elementCustomXp = $('#elementCustomXp').val(null)
+            let fightExpectedLevel = $('#fightExpectedPlayerLevel').val(session.getPlayerGroupLevel())
+            let expectedPlayers = $(`#fightPlayerExpectedAmount`).val(session.params.players.length)
+            let fightXp = $('#fightXpLabel').text("0xp")
+            setRating(PF2EncounterPlanner.EncounterRating.TRIVIAL)
             let elementAccomplishmentLevel = $('#elementAccomplishmentLevel').val(PF2EncounterPlanner.AccomplishmentLevel.MINOR)
 
             $("#setElementModal").modal('show')
@@ -363,6 +397,12 @@
                         break;
                     case PF2EncounterPlanner.ComponentType.FIGHT:
                         $('#fight-tab').tab('show')
+                        tmpFightComponent = selectedElement.component
+                        fightExpectedLevel.val(selectedElement.component.expectedLevel)
+                        expectedPlayers.val(selectedElement.component.expectedPlayers)
+                        let xp = selectedElement.component.getEncounterXpPerPlayer()
+                        fightXp.text(`${xp != null ? xp : "?"}xp`)
+                        setRating(selectedElement.component.getEncounterRating())
                         break;
                     case PF2EncounterPlanner.ComponentType.ACCOMPLISHMENT:
                         elementAccomplishmentLevel.val(selectedElement.component.level)
@@ -373,6 +413,16 @@
                         break;
                 }
             }
+
+            if (tmpFightComponent == null) tmpFightComponent = new PF2EncounterPlanner.FightComponent()
+        }
+
+
+        function setRating(rating)
+        {
+            $('#fightRatingSelector button').removeClass('active')
+            $('#fightRatingSelector').val(rating)
+            $(`#label-${rating}`).addClass('active')
         }
 
 
@@ -385,10 +435,10 @@
                 let xp = element.component.getEncounterXpPerPlayer()
 
                 if (element.component.type === PF2EncounterPlanner.ComponentType.FIGHT) {
-                    let amount = element.component.creatures.length
+                    let amount = element.component.creatures.map(c => c.amount).reduce((a, b) => a + b, 0)
                     text += ` (${amount} creature${amount === 1 ? "" : "s"}, ${xp == null ? "?" : Math.floor(xp)} xp)`
                 } else if (element.component.type === PF2EncounterPlanner.ComponentType.HAZARD) {
-                    let amount = element.component.hazards.length
+                    let amount = element.component.hazards.map(h => h.amount).reduce((a, b) => a + b, 0)
                     text += ` (${amount} hazard${amount === 1 ? "" : "s"}, ${xp == null ? "?" : Math.floor(xp)} xp)`
                 } else {
                     text += ` (${xp == null ? "?" : Math.floor(xp)} xp)`
@@ -415,8 +465,7 @@
                     selectedElement.component = new PF2EncounterPlanner.CustomComponent($('#elementCustomXp').val())
                     break;
                 case PF2EncounterPlanner.ComponentType.FIGHT:
-                    selectedElement.component = new PF2EncounterPlanner.FightComponent()
-                    selectedElement.component.creatures = tmpCreatures
+                    selectedElement.component = tmpFightComponent
                     break;
                 case PF2EncounterPlanner.ComponentType.ACCOMPLISHMENT:
                     selectedElement.component = new PF2EncounterPlanner.AccomplishmentComponent($('#elementAccomplishmentLevel').val())
@@ -441,6 +490,22 @@
         })
 
         updatePlanner()
+
+        $('#fightPlayerExpectedAmount').change(function() {
+            tmpFightComponent.expectedPlayers = Math.max(1, $(this).val())
+            $(this).val(tmpFightComponent.expectedPlayers)
+            setRating(tmpFightComponent.getEncounterRating())
+            let xp = Math.round(selectedElement.component.getEncounterXpPerPlayer())
+            $('#fightXpLabel').text(`${xp != null ? xp : "?"}xp`)
+        })
+
+        $('#fightExpectedPlayerLevel').change(function() {
+            tmpFightComponent.expectedLevel = Math.min(20, Math.max(1, $(this).val()))
+            $(this).val(tmpFightComponent.expectedLevel)
+            setRating(tmpFightComponent.getEncounterRating())
+            let xp = Math.round(selectedElement.component.getEncounterXpPerPlayer())
+            $('#fightXpLabel').text(`${xp != null ? xp : "?"}xp`)
+        })
     </script>
 </body>
 </html>
