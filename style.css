@@ -41,3 +41,7 @@ body {
 .fight-rating-label {
     margin-right: 1em;
 }
+
+#settings h2 {
+    margin: 0.8em 0;
+}

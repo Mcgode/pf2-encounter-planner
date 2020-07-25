@@ -16,19 +16,27 @@ export class Session
             players: [
                 {
                     name: "Player 1",
-                    xp: 0
+                    level: 1,
+                    xp: 0,
+                    id: "player-1",
                 },
                 {
                     name: "Player 2",
-                    xp: 0
+                    level: 1,
+                    xp: 0,
+                    id: "player-2",
                 },
                 {
                     name: "Player 3",
-                    xp: 0
+                    level: 1,
+                    xp: 0,
+                    id: "player-3",
                 },
                 {
                     name: "Player 4",
-                    xp: 0
+                    level: 1,
+                    xp: 0,
+                    id: "player-4",
                 },
             ]
         }, params)
@@ -124,6 +132,23 @@ export class Session
         }
 
         return JSON.stringify(object)
+    }
+
+
+    addPlayer(name, level, xp)
+    {
+        let id, found;
+        do {
+            id = "player-" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
+            found = this.params.players.find(p => p.id === id) != null
+        } while (found)
+
+        return this.params.players[this.params.players.push({
+            id: id,
+            name: name,
+            level: level,
+            xp: xp
+        })-1]
     }
 
 

@@ -19,6 +19,9 @@
         <li class="nav-item">
             <a class="nav-link" id="history-tab" data-toggle="tab" href="#history" role="tab" aria-controls="history" aria-selected="false">Encounter history</a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" id="settings-tab" data-toggle="tab" href="#settings" role="tab" aria-controls="settings" aria-selected="false">Session settings</a>
+        </li>
     </ul>
 
     <div class="tab-content" id="mainContent">
@@ -203,6 +206,62 @@
         <div class="tab-pane fade" id="history" role="tabpanel" aria-labelledby="history-tab">
             Encounter history
         </div>
+
+        <div class="tab-pane fade" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+            <h2>Session settings</h2>
+
+            <div class="form-group form-check" style="padding: 0 2em">
+                <input type="checkbox" id="params-autoLevelUp" class="form-check-input">
+                <label for="params-autoLevelUp" class="form-check-label">Automatic level up</label>
+            </div>
+
+            <p class="btn btn-outline-primary" type="button" data-toggle="collapse" data-target="#playerCollapse" aria-expanded="false" aria-controls="playerCollapse">
+                List of players
+            </p>
+
+            <div class="collapse" id="playerCollapse">
+                <div class="card card-body">
+                    <div class="list-group" id="playersList"></div>
+
+                    <button class="btn btn-outline-primary" onclick="showPlayerModal(true)">Add new player</button>
+                </div>
+            </div>
+
+            <div class="modal fade" id="setPlayerModal" tabindex="-1" role="dialog" aria-labelledby="setPlayerModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="setPlayerModalLabel">Add a new player to the session</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="setPlayerForm" action="javascript:confirmPlayer()">
+                                <div class="form-group">
+                                    <label for="playerName" class="col-form-label">Player name:</label>
+                                    <input type="text" class="form-control" id="playerName" name="playerName">
+                                </div>
+                                <div class="form-group">
+                                    <label for="playerLevel" class="col-form-label">Player starting level:</label>
+                                    <input type="number" class="form-control" id="playerLevel" name="playerLevel" min="1" max="20">
+                                </div>
+                                <div class="form-group">
+                                    <label for="playerXp" class="col-form-label">Player starting xp:</label>
+                                    <input type="number" class="form-control" id="playerXp" name="playerXp" min="0">
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" id="setPlayerModalConfirm" onclick="document.forms['setPlayerForm'].submit()">
+                                Add player
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Scripts loaders -->
@@ -217,6 +276,7 @@
         let selectedEncounter = null
         let selectedElement = null
         let selectedTab = PF2EncounterPlanner.ComponentType.CUSTOM
+        let selectedPlayer = null
 
         let tmpFightComponent = null
         let tmpHazardComponent = null
@@ -860,6 +920,80 @@
         }
 
 
+        function addPlayer(player)
+        {
+            let list = $('#playersList')
+            list.append(
+                $('<div class="list-group-item"></div>')
+                    .prop('id', `${player.id}-item`)
+                    .css("display", "flex")
+                    .css("flex-direction", "row")
+                    .append(
+                        $('<button></button>')
+                            .addClass('btn largest-button text-left')
+                            .click(_ => {
+                                selectedPlayer = player
+                                showPlayerModal(false)
+                            }),
+                        $('<button></button>')
+                            .addClass('btn btn-outline-danger')
+                            .text("Delete")
+                            .click(_ => {
+                                let index = session.params.players.findIndex(p => p.id === player.id)
+                                session.params.players.splice(index, 1)
+                                $(`#${player.id}-item`).remove()
+                                session.saveSession()
+                            })
+                    )
+            )
+            setPlayerHeader(player)
+        }
+
+
+        function setPlayerHeader(player)
+        {
+            let htmlText = `<strong>[Lvl ${player.level}]</strong> ${player.name} - <a class="font-italic">${player.xp}xp</a>`
+
+            $(`#${player.id}-item button`).first().html(htmlText)
+        }
+
+
+        function showPlayerModal(adding = false)
+        {
+            $('#setPlayerModalLabel').text(adding ? "Add a new player to the session" : "Edit player")
+            $('#playerName').val(adding ? null : selectedPlayer.name)
+            $('#playerLevel').val(adding ? 1 : selectedPlayer.level)
+            $('#playerXp').val(adding ? 0 : selectedPlayer.xp)
+            $('#setPlayerModalConfirm').text(adding ? "Add player" : "Save changes")
+
+            $('#setPlayerModal').modal('show')
+        }
+
+
+        function confirmPlayer()
+        {
+            let name = $('#playerName').val()
+
+            $('#setPlayerModal').modal('hide')
+            if (name == null || name.trim().length === 0) return;
+
+            let level = $('#playerLevel').val() || 1
+            let xp = $('#playerXp').val() || 0
+
+            if (selectedPlayer != null) {
+                selectedPlayer.name = name.trim()
+                selectedPlayer.level = level
+                selectedPlayer.xp = xp
+
+                setPlayerHeader(selectedPlayer)
+            } else {
+                addPlayer(session.addPlayer(name, level, xp))
+            }
+
+            session.saveSession()
+        }
+
+
         Sortable.create(document.getElementById('encountersAccordion'), {
             animation: 150,
             onEnd: function (event) { session.moveEncounterIndex(event.oldIndex, event.newIndex) }
@@ -932,6 +1066,17 @@
 
             $(`#${hazard.id}-collapser`).dropdown('show')
         })
+
+
+        $('#params-autoLevelUp')
+            .prop('checked', session.params.autoLevelUp)
+            .change(function() {
+                session.params.autoLevelUp = $(this).prop('checked')
+                session.saveSession()
+            })
+
+        for (let player of session.params.players)
+            addPlayer(player)
     </script>
 </body>
 </html>
