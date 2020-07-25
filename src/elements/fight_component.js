@@ -29,7 +29,7 @@ export class FightComponent
             }
         }
 
-        xpTotal *= this.expectedPlayers / 4
+        xpTotal *= 4 / this.expectedPlayers
 
         return xpTotal
     }

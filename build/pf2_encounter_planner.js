@@ -54,7 +54,7 @@
                 }
             }
 
-            xpTotal *= this.expectedPlayers / 4;
+            xpTotal *= 4 / this.expectedPlayers;
 
             return xpTotal
         }
@@ -572,7 +572,7 @@
         }
 
 
-        getPlayerGroupXp() {
+        getPlayerGroupLevel() {
             return Math.min(...this.params.players.map(p => Math.floor(p.xp / 1000) + 1))
         }
 
