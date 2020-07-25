@@ -18,12 +18,14 @@ export class HazardComponent {
         let xpTotal = 0
 
         for (let hazard of this.hazards) {
-            let relativeLvl = hazard.level - this.expectedLevel
+            if (hazard.level != null && hazard.amount != null) {
+                let relativeLvl = hazard.level - this.expectedLevel
 
-            if (relativeLvl > 4) return null
+                if (relativeLvl > 4) return null
 
-            if (relativeLvl >= -4) {
-                xpTotal += hazard.amount * XpPerRelativeLevel[relativeLvl.toString()] * (hazard.isComplex ? 5 : 1)
+                if (relativeLvl >= -4) {
+                    xpTotal += hazard.amount * XpPerRelativeLevel[relativeLvl.toString()] * (hazard.isComplex ? 5 : 1)
+                }
             }
         }
 
@@ -48,22 +50,37 @@ export class HazardComponent {
 
     static importFromJSON(data) {
         let result = new HazardComponent(data.expectedLevel || 1)
-        for (let c of data.creatures) {
+        for (let c of data.hazards) {
             result.hazards.push(Hazard.importFromJSON(c))
         }
         return result
+    }
+
+
+    getNewHazardId()
+    {
+        let found = false
+        let id;
+        do {
+            id = "hazard-" + Math.floor(Number.MAX_SAFE_INTEGER * Math.random())
+            for (let hazard of this.hazards) {
+                if (hazard.id === id) { found = true; break }
+            }
+        } while (found)
+        return id
     }
 }
 
 
 export class Hazard
 {
-    constructor(name, level, isComplex, amount, link = null) {
+    constructor(name, level, isComplex, amount, link = null, id = null) {
         this.name = name
-        this.level = level == null ? 0 : level
+        this.level = level
         this.isComplex = isComplex
-        this.amount = amount == null ? 1 : amount
+        this.amount = amount
         this.link = link
+        this.id = id
     }
 
 
@@ -74,13 +91,14 @@ export class Hazard
             level: this.level,
             isComplex: this.isComplex,
             amount: this.amount,
-            link: this.link
+            link: this.link,
+            id: this.id,
         }
     }
 
 
     static importFromJSON(data) {
-        return new Hazard(data.name, data.leadingComments, data.isComplex, data.amount, data.link)
+        return new Hazard(data.name, data.level, data.isComplex, data.amount, data.link, data.id)
     }
 }
 

@@ -170,8 +170,19 @@
                                     </div>
 
                                     <div class="tab-pane fade" id="hazard" role="tabpanel" aria-labelledby="hazard-tab">
-                                        <div class="list-group" id="elementHazardList"></div>
-                                        <button class="btn btn-outline-primary btn-top-margin">
+                                        <div class="form-group row">
+                                            <label for="hazardExpectedPlayerLevel" class="col-form-label col-sm-4">Expected player level:</label>
+                                            <input type="number" id="hazardExpectedPlayerLevel" class="col-sm-6" min="1" max="20">
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <label class="col-sm-4 col-form-label">Experience per player: </label>
+                                            <label class="col-sm-6 col-form-label"><strong id="hazardXpLabel">?xp</strong></label>
+                                        </div>
+
+                                        <div class="accordion" id="elementHazardAccordion"></div>
+
+                                        <button class="btn btn-outline-primary btn-top-margin" id="hazardAddHazard">
                                             Add more hazards
                                         </button>
                                     </div>
@@ -208,7 +219,7 @@
         let selectedTab = PF2EncounterPlanner.ComponentType.CUSTOM
 
         let tmpFightComponent = null
-        let tmpHazards = []
+        let tmpHazardComponent = null
 
         let addEncounterModal = $('#addEncounterModal');
         addEncounterModal.on('shown.bs.modal', function() {
@@ -373,6 +384,7 @@
                 selectedElement = null
 
             tmpFightComponent = null
+            tmpHazardComponent = null
 
             $('#setElementModalLabel').text(adding ? "Add a new encounter element" : "Edit encounter element")
             $('#setElementModalConfirm').text(adding ? "Add encounter element" : "Edit encounter element")
@@ -382,10 +394,13 @@
             let elementCustomXp = $('#elementCustomXp').val(null)
             let fightExpectedLevel = $('#fightExpectedPlayerLevel').val(session.getPlayerGroupLevel())
             let expectedPlayers = $(`#fightPlayerExpectedAmount`).val(session.params.players.length)
-            let fightXp = $('#fightXpLabel').text("0xp")
+            let fightXp = $('#fightXpLabel').text("?xp")
             setRating(PF2EncounterPlanner.EncounterRating.TRIVIAL)
             $('#elementCreatureAccordion').empty()
             let elementAccomplishmentLevel = $('#elementAccomplishmentLevel').val(PF2EncounterPlanner.AccomplishmentLevel.MINOR)
+            let hazardExpectedLevel = $('#hazardExpectedPlayerLevel').val(session.getPlayerGroupLevel())
+            let hazardXp = $('#hazardXpLabel').text("?xp")
+            $('#elementHazardAccordion').empty()
 
             $("#setElementModal").modal('show')
 
@@ -401,7 +416,7 @@
                         fightExpectedLevel.val(selectedElement.component.expectedLevel)
                         expectedPlayers.val(selectedElement.component.expectedPlayers)
                         let xp = selectedElement.component.getEncounterXpPerPlayer()
-                        fightXp.text(`${xp != null ? xp : "?"}xp`)
+                        fightXp.text(`${xp != null ? Math.round(xp) : "?"}xp`)
                         setRating(selectedElement.component.getEncounterRating())
                         for (let creature of tmpFightComponent.creatures) {
                             addCreature(creature)
@@ -413,11 +428,19 @@
                         break;
                     case PF2EncounterPlanner.ComponentType.HAZARD:
                         $('#hazard-tab').tab('show')
+                        tmpHazardComponent = selectedElement.component
+                        hazardExpectedLevel.val(tmpHazardComponent.expectedLevel)
+                        let hxp = tmpHazardComponent.getEncounterXpPerPlayer()
+                        hazardXp.text(`${hxp != null ? Math.round(hxp) : "?"}xp`)
+                        for (let hazard of tmpHazardComponent.hazards) {
+                            addHazard(hazard)
+                        }
                         break;
                 }
             }
 
             if (tmpFightComponent == null) tmpFightComponent = new PF2EncounterPlanner.FightComponent()
+            if (tmpHazardComponent == null) tmpHazardComponent= new PF2EncounterPlanner.HazardComponent()
         }
 
 
@@ -474,8 +497,7 @@
                     selectedElement.component = new PF2EncounterPlanner.AccomplishmentComponent($('#elementAccomplishmentLevel').val())
                     break;
                 case PF2EncounterPlanner.ComponentType.HAZARD:
-                    selectedElement.component = new PF2EncounterPlanner.HazardComponent()
-                    selectedElement.component.hazards = tmpHazards
+                    selectedElement.component = tmpHazardComponent
                     break;
             }
 
@@ -490,8 +512,8 @@
         function updateFightInterface()
         {
             setRating(tmpFightComponent.getEncounterRating())
-            let xp = Math.round(selectedElement.component.getEncounterXpPerPlayer())
-            $('#fightXpLabel').text(`${xp != null ? xp : "?"}xp`)
+            let xp = tmpFightComponent.getEncounterXpPerPlayer()
+            $('#fightXpLabel').text(`${xp != null ? Math.round(xp) : "?"}xp`)
         }
 
 
@@ -646,6 +668,183 @@
         }
 
 
+        function updateHazardInterface()
+        {
+            let xp = tmpHazardComponent.getEncounterXpPerPlayer()
+            $('#fightXpLabel').text(`${xp != null ? Math.round(xp) : "?"}xp`)
+        }
+
+
+        function addHazard(hazard)
+        {
+            let accordion = $('#elementHazardAccordion')
+            let collapseId = `${hazard.id}-card-collapse`
+            accordion.append(
+                $("<div></div>")
+                    .addClass('card')
+                    .prop('id', `${hazard.id}-card`)
+                    .append(
+                        $("<div></div>")
+                            .addClass('card-header')
+                            .prop('id', `${hazard.id}-card-header`)
+                            .append(
+                                $("<h2></h2>")
+                                    .addClass("mb-0 accordion-card-header")
+                                    .append(
+                                        $('<a></a>')
+                                            .addClass('btn collapsed text-left largest-button handle')
+                                            .attr('id', `${hazard.id}-card-header-text`),
+                                        $('<a></a>')
+                                            .addClass('font-italic btn')
+                                            .attr('id', `${hazard.id}-card-header-xp`),
+                                        $('<button></button>')
+                                            .addClass('btn btn-outline-info btn-pad')
+                                            .prop('id',  `${hazard.id}-collapser`)
+                                            .attr('type', 'button')
+                                            .attr('data-toggle', 'collapse')
+                                            .attr('data-target', `#${collapseId}`)
+                                            .attr('aria-expanded', 'false')
+                                            .attr('aria-controls', collapseId)
+                                            .text("Edit"),
+                                        $('<button></button>')
+                                            .addClass('btn btn-outline-danger')
+                                            .prop('type', 'button')
+                                            .text("Delete")
+                                            .click(_ => {
+                                                let index = tmpHazardComponent.hazards.findIndex(c => c.id === hazard.id)
+                                                tmpHazardComponent.hazards.splice(index, 1)
+                                                $(`#${hazard.id}-card`).remove()
+                                            })
+                                    )
+                            ),
+                        $(`<div aria-labelledby='${hazard.id}-card-header' data-parent="#elementHazardAccordion"></div>`)
+                            .addClass('collapse')
+                            .prop('id', collapseId)
+                            .append(
+                                $('<div></div>')
+                                    .addClass('card-body')
+                                    .append(
+                                        $('<div></div>')
+                                            .addClass('form-group row')
+                                            .append(
+                                                $('<label></label>')
+                                                    .addClass('col-form-label col-sm-4')
+                                                    .text("Hazard name")
+                                                    .prop('for', `${hazard.id}-name`),
+                                                $('<input>')
+                                                    .addClass('col-sm-6')
+                                                    .prop('id', `${hazard.id}-name`)
+                                                    .attr('type', 'text')
+                                                    .change(function () {
+                                                        hazard.name = $(this).val().trim()
+                                                        setCreatureHeader(hazard)
+                                                    })
+                                            ),
+                                        $('<div></div>')
+                                            .addClass('form-group row')
+                                            .append(
+                                                $('<label></label>')
+                                                    .addClass('col-form-label col-sm-4')
+                                                    .text("Hazard level:")
+                                                    .prop('for', `${hazard.id}-level`),
+                                                $('<input>')
+                                                    .addClass('col-sm-6')
+                                                    .prop('id', `${hazard.id}-level`)
+                                                    .attr('type', 'number')
+                                                    .change(function () {
+                                                        hazard.level = Math.max(-1, Math.min($(this).val(), 24))
+                                                        $(this).val(hazard.level)
+                                                        updateHazardInterface()
+                                                        setHazardHeader(hazard)
+                                                    })
+                                            ),
+                                        $('<div></div>')
+                                            .addClass('form-group form-check')
+                                            .append(
+                                                $('<label></label>')
+                                                    .addClass('form-check-label col-sm-4 text-right label-pad-right')
+                                                    .text("Is hazard complex ?")
+                                                    .css('padding-right', '2em')
+                                                    .prop('for', `${hazard.id}-isComplex`),
+                                                $('<input>')
+                                                    .addClass('form-check-input')
+                                                    .prop('id', `${hazard.id}-isComplex`)
+                                                    .attr('type', 'checkbox')
+                                                    .change(function () {
+                                                        hazard.isComplex = $(this).prop('checked')
+                                                        updateHazardInterface()
+                                                        setHazardHeader(hazard)
+                                                    }),
+                                            ),
+                                        $('<div></div>')
+                                            .addClass('form-group row')
+                                            .append(
+                                                $('<label></label>')
+                                                    .addClass('col-form-label col-sm-4')
+                                                    .text("Amount of hazards:")
+                                                    .prop('for', `${hazard.id}-amount`),
+                                                $('<input>')
+                                                    .addClass('col-sm-6')
+                                                    .prop('id', `${hazard.id}-amount`)
+                                                    .attr('type', 'number')
+                                                    .change(function () {
+                                                        hazard.amount = Math.max(1, $(this).val())
+                                                        $(this).val(hazard.amount)
+                                                        updateHazardInterface()
+                                                        setHazardHeader(hazard)
+                                                    })
+                                            ),
+                                        $('<div></div>')
+                                            .addClass('form-group row')
+                                            .append(
+                                                $('<label></label>')
+                                                    .addClass('col-form-label col-sm-4')
+                                                    .text("Link to hazard (optional):")
+                                                    .prop('for', `${hazard.id}-link`),
+                                                $('<input>')
+                                                    .addClass('col-sm-6')
+                                                    .prop('id', `${hazard.id}-link`)
+                                                    .attr('type', 'text')
+                                                    .change(function () {
+                                                        hazard.link = $(this).val().trim()
+                                                        setCreatureHeader(hazard)
+                                                    })
+                                            )
+                                    )
+                            )
+                    )
+            )
+
+            $(`#${hazard.id}-name`).val(hazard.name)
+            $(`#${hazard.id}-level`).val(hazard.level)
+            $(`#${hazard.id}-isComplex`).prop('checked', hazard.isComplex)
+            $(`#${hazard.id}-amount`).val(hazard.amount)
+            $(`#${hazard.id}-link`).val(hazard.link)
+            setHazardHeader(hazard)
+        }
+
+
+        function setHazardHeader(hazard)
+        {
+            let htmlText = hazard.name != null && hazard.name.length > 0 ? hazard.name : "Unnamed hazard";
+
+            htmlText = `<strong>[Lvl ${hazard.level != null ? hazard.level : "?"}]</strong> ` + htmlText;
+
+            htmlText += ` &times; ${hazard.amount != null ? hazard.amount : "?"}`;
+
+            if (hazard.link != null && hazard.link.length > 0)
+                htmlText += ` (<a href='${hazard.link}' target="_blank">link</a>)`
+            $(`#${hazard.id}-card-header-text`).html(htmlText)
+
+            let tmp = tmpHazardComponent.hazards
+            tmpHazardComponent.hazards = [hazard]
+            let xp = tmpHazardComponent.getEncounterXpPerPlayer()
+            tmpHazardComponent.hazards = tmp
+            $(`#${hazard.id}-card-header-xp`)
+                .text((xp != null ? Math.round(xp) : "?") + "xp")
+        }
+
+
         Sortable.create(document.getElementById('encountersAccordion'), {
             animation: 150,
             onEnd: function (event) { session.moveEncounterIndex(event.oldIndex, event.newIndex) }
@@ -677,12 +876,40 @@
             }
         })
 
+
+        $('#hazardExpectedPlayerLevel').change(function() {
+            tmpHazardComponent.expectedLevel = Math.min(20, Math.max(1, $(this).val()))
+            $(this).val(tmpHazardComponent.expectedLevel)
+            updateFightInterface()
+        })
+
+
+        Sortable.create(document.getElementById('elementHazardAccordion'), {
+            animation: 150,
+            handle: '.handle',
+            onEnd: event => {
+                let e = tmpHazardComponent.hazards[event.oldIndex]
+                tmpHazardComponent.hazards.splice(event.oldIndex, 1)
+                tmpHazardComponent.hazards.splice(event.newIndex, 0, e)
+                session.saveSession()
+            }
+        })
+
+
         $('#fightAddCreature').click(_ => {
             let creature = new PF2EncounterPlanner.Creature(null, null, null, null, tmpFightComponent.getNewCreatureId())
             addCreature(creature)
             tmpFightComponent.creatures.push(creature)
 
             $(`#${creature.id}-collapser`).dropdown('show')
+        })
+
+        $('#hazardAddHazard').click(_ => {
+            let hazard = new PF2EncounterPlanner.Hazard(null, null, false, null, null, tmpHazardComponent.getNewHazardId())
+            addHazard(hazard)
+            tmpHazardComponent.hazards.push(hazard)
+
+            $(`#${hazard.id}-collapser`).dropdown('show')
         })
     </script>
 </body>
