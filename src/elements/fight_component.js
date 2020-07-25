@@ -91,6 +91,11 @@ export class FightComponent
         } while (found)
         return id
     }
+
+
+    copy() {
+        return FightComponent.importFromJSON(this.exportToJSON())
+    }
 }
 
 

@@ -412,7 +412,7 @@
                         break;
                     case PF2EncounterPlanner.ComponentType.FIGHT:
                         $('#fight-tab').tab('show')
-                        tmpFightComponent = selectedElement.component
+                        tmpFightComponent = selectedElement.component.copy()
                         fightExpectedLevel.val(selectedElement.component.expectedLevel)
                         expectedPlayers.val(selectedElement.component.expectedPlayers)
                         let xp = selectedElement.component.getEncounterXpPerPlayer()
@@ -428,7 +428,7 @@
                         break;
                     case PF2EncounterPlanner.ComponentType.HAZARD:
                         $('#hazard-tab').tab('show')
-                        tmpHazardComponent = selectedElement.component
+                        tmpHazardComponent = selectedElement.component.copy()
                         hazardExpectedLevel.val(tmpHazardComponent.expectedLevel)
                         let hxp = tmpHazardComponent.getEncounterXpPerPlayer()
                         hazardXp.text(`${hxp != null ? Math.round(hxp) : "?"}xp`)

@@ -116,6 +116,11 @@
             } while (found)
             return id
         }
+
+
+        copy() {
+            return FightComponent.importFromJSON(this.exportToJSON())
+        }
     }
 
 
@@ -294,6 +299,11 @@
                 }
             } while (found)
             return id
+        }
+
+
+        copy() {
+            return HazardComponent.importFromJSON(this.exportToJSON())
         }
     }
 

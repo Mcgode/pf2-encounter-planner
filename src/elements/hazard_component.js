@@ -69,6 +69,11 @@ export class HazardComponent {
         } while (found)
         return id
     }
+
+
+    copy() {
+        return HazardComponent.importFromJSON(this.exportToJSON())
+    }
 }
 
 
