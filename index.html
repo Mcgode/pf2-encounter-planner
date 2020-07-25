@@ -856,12 +856,16 @@
             tmpFightComponent.expectedPlayers = Math.max(1, $(this).val())
             $(this).val(tmpFightComponent.expectedPlayers)
             updateFightInterface()
+            for (let creature of tmpFightComponent.creatures)
+                setCreatureHeader(creature)
         })
 
         $('#fightExpectedPlayerLevel').change(function() {
             tmpFightComponent.expectedLevel = Math.min(20, Math.max(1, $(this).val()))
             $(this).val(tmpFightComponent.expectedLevel)
             updateFightInterface()
+            for (let creature of tmpFightComponent.creatures)
+                setCreatureHeader(creature)
         })
 
 
@@ -881,6 +885,8 @@
             tmpHazardComponent.expectedLevel = Math.min(20, Math.max(1, $(this).val()))
             $(this).val(tmpHazardComponent.expectedLevel)
             updateFightInterface()
+            for (let hazard of tmpHazardComponent.hazards)
+                setHazardHeader(hazard)
         })
 
 
