@@ -96,7 +96,7 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            <form id="setElementModalForm" action="javascript:console.log(elementName.value)">
+                            <form id="setElementModalForm" action="javascript:confirmElementData">
                                 <div class="form-group">
                                     <label for="elementName" class="col-form-label">Encounter element name:</label>
                                     <input type="text" class="form-control" id="elementName" name="elementName">
@@ -152,7 +152,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary" id="setElementModalConfirm" onclick="document.forms['setElementModalForm'].submit()">
+                            <button type="button" class="btn btn-primary" id="setElementModalConfirm" onclick="confirmElementData()">
                                 Add element
                             </button>
                         </div>
@@ -178,6 +178,9 @@
         let selectedEncounter = null
         let selectedElement = null
         let selectedTab = PF2EncounterPlanner.ComponentType.CUSTOM
+
+        let tmpCreatures = []
+        let tmpHazards = []
 
         let addEncounterModal = $('#addEncounterModal');
         addEncounterModal.on('shown.bs.modal', function() {
@@ -280,7 +283,10 @@
                                         .addClass('btn btn-outline-primary btn-top-margin')
                                         .prop('type', 'button')
                                         .text("Add encounter element")
-                                        .click(_ => showSettingElement(true))
+                                        .click(_ => {
+                                            selectedEncounter = encounter
+                                            showSettingElement(true)
+                                        })
                                 )
                         )
                 )
@@ -303,22 +309,7 @@
             let list = $(`#${encounter.id}-card-list`).empty()
 
             for (let element of encounter.elements) {
-                let text = element.name
-                text = `<strong>[${element.component == null ? "?" : PF2EncounterPlanner.ComponentTypeName[element.component.type] || "?"}]</strong> ` + text
-
-                if (element.component != null) {
-                    let xp = element.component.getEncounterXpPerPlayer()
-
-                    if (element.component.type === PF2EncounterPlanner.ComponentType.FIGHT) {
-                        let amount = element.component.creatures.length
-                        text += ` (${amount} creature${amount === 1 ? "" : "s"}, ${xp == null ? "?" : Math.floor(xp)} xp)`
-                    } else if (element.component.type === PF2EncounterPlanner.ComponentType.HAZARD) {
-                        let amount = element.component.hazards.length
-                        text += ` (${amount} hazard${amount === 1 ? "" : "s"}, ${xp == null ? "?" : Math.floor(xp)} xp)`
-                    } else {
-                        text += ` (${xp == null ? "?" : Math.floor(xp)} xp)`
-                    }
-                }
+                let text = getElementText(element)
 
                 list.append(
                     $('<a></a>')
@@ -349,7 +340,8 @@
         }
 
 
-        function showSettingElement(adding = false) {
+        function showSettingElement(adding = false)
+        {
             if (adding)
                 selectedElement = null
 
@@ -381,6 +373,65 @@
                         break;
                 }
             }
+        }
+
+
+        function getElementText(element)
+        {
+            let text = element.name
+            text = `<strong>[${element.component == null ? "?" : PF2EncounterPlanner.ComponentTypeName[element.component.type] || "?"}]</strong> ` + text
+
+            if (element.component != null) {
+                let xp = element.component.getEncounterXpPerPlayer()
+
+                if (element.component.type === PF2EncounterPlanner.ComponentType.FIGHT) {
+                    let amount = element.component.creatures.length
+                    text += ` (${amount} creature${amount === 1 ? "" : "s"}, ${xp == null ? "?" : Math.floor(xp)} xp)`
+                } else if (element.component.type === PF2EncounterPlanner.ComponentType.HAZARD) {
+                    let amount = element.component.hazards.length
+                    text += ` (${amount} hazard${amount === 1 ? "" : "s"}, ${xp == null ? "?" : Math.floor(xp)} xp)`
+                } else {
+                    text += ` (${xp == null ? "?" : Math.floor(xp)} xp)`
+                }
+            }
+
+            return text
+        }
+
+
+        function confirmElementData()
+        {
+            if (selectedElement == null) {
+                selectedElement = new PF2EncounterPlanner.EncounterElement($('#elementName').val())
+                session.registerElement(selectedEncounter.name, selectedElement)
+
+                updateEncounterElements(selectedEncounter)
+            } else {
+                selectedElement.name = $('#elementName').val()
+            }
+
+            switch (selectedTab) {
+                case PF2EncounterPlanner.ComponentType.CUSTOM:
+                    selectedElement.component = new PF2EncounterPlanner.CustomComponent($('#elementCustomXp').val())
+                    break;
+                case PF2EncounterPlanner.ComponentType.FIGHT:
+                    selectedElement.component = new PF2EncounterPlanner.FightComponent()
+                    selectedElement.component.creatures = tmpCreatures
+                    break;
+                case PF2EncounterPlanner.ComponentType.ACCOMPLISHMENT:
+                    selectedElement.component = new PF2EncounterPlanner.AccomplishmentComponent($('#elementAccomplishmentLevel').val())
+                    break;
+                case PF2EncounterPlanner.ComponentType.HAZARD:
+                    selectedElement.component = new PF2EncounterPlanner.HazardComponent()
+                    selectedElement.component.hazards = tmpHazards
+                    break;
+            }
+
+            session.saveSession()
+
+            $(`#${selectedElement.id}-item`).html(getElementText(selectedElement))
+
+            setElementModal.modal('hide')
         }
 
 

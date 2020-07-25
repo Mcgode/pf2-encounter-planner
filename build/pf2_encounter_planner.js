@@ -12,14 +12,14 @@
 
     const ComponentType = {
         FIGHT: 'fight_component',
-        ACCOMPLISHMENT: "achievement_component",
+        ACCOMPLISHMENT: "accomplishment_component",
         HAZARD: "hazard_component",
         CUSTOM: "custom_component"
     };
 
     const ComponentTypeName = {
         fight_component: "Fight",
-        accomplishment_component: "Achievement",
+        accomplishment_component: "Accomplishment",
         hazard_component: "Hazard",
         custom_component: "Custom",
     };
@@ -481,8 +481,8 @@
         {
             let encounter = this.encounters.find(e => e.name === encounterName);
             if (encounter != null) {
-                encounter.elements.push(element);
                 element.registerToSession(this);
+                encounter.elements.push(element);
             }
             this.saveSession();
             return encounter != null
@@ -576,10 +576,13 @@
     exports.Session = Session;
     exports.Encounter = Encounter;
     exports.EncounterElement = EncounterElement;
+    exports.CustomComponent = CustomComponent;
     exports.FightComponent = FightComponent;
     exports.Creature = Creature;
     exports.EncounterRating = EncounterRating;
+    exports.AccomplishmentComponent = AccomplishmentComponent;
     exports.AccomplishmentLevel = AccomplishmentLevel;
+    exports.HazardComponent = HazardComponent;
     exports.ComponentType = ComponentType;
     exports.ComponentTypeName = ComponentTypeName;
 

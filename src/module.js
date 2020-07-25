@@ -12,7 +12,10 @@ export { Session }
 export { Encounter } from "./encounter";
 
 export { EncounterElement } from "./elements/encounter_element";
+
+export { CustomComponent } from "./elements/custom_component";
 export { FightComponent, Creature, EncounterRating } from "./elements/fight_component";
-export { AccomplishmentLevel } from "./elements/accomplishment_component";
+export { AccomplishmentComponent, AccomplishmentLevel } from "./elements/accomplishment_component";
+export { HazardComponent } from "./elements/hazard_component";
 
 export {ComponentType, ComponentTypeName} from "./elements/component_types";
