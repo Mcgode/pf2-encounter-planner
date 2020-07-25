@@ -6,18 +6,19 @@
 import {ComponentType} from "./component_types";
 
 export class HazardComponent {
-    constructor() {
+    constructor(expectedLevel = 1) {
         this.type = ComponentType.HAZARD
+        this.expectedLevel = expectedLevel
         this.hazards = []
     }
 
 
-    getEncounterXpPerPlayer(playersLevel = 1, _ = null)
+    getEncounterXpPerPlayer()
     {
         let xpTotal = 0
 
         for (let hazard of this.hazards) {
-            let relativeLvl = hazard.level - playersLevel
+            let relativeLvl = hazard.level - this.expectedLevel
 
             if (relativeLvl > 4) return null
 
@@ -33,7 +34,8 @@ export class HazardComponent {
     exportToJSON() {
         let object = {
             type: ComponentType.HAZARD,
-            hazards: []
+            hazards: [],
+            expectedLevel: this.expectedLevel,
         }
 
         for (let creature of this.hazards) {
@@ -45,7 +47,7 @@ export class HazardComponent {
 
 
     static importFromJSON(data) {
-        let result = new HazardComponent()
+        let result = new HazardComponent(data.expectedLevel || 1)
         for (let c of data.creatures) {
             result.hazards.push(Hazard.importFromJSON(c))
         }

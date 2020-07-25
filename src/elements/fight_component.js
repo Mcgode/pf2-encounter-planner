@@ -7,18 +7,20 @@ import {ComponentType} from "./component_types";
 
 export class FightComponent
 {
-    constructor() {
+    constructor(expectedPlayers = 4, expectedLevel = 1) {
         this.type = ComponentType.FIGHT
         this.creatures = []
+        this.expectedPlayers = expectedPlayers
+        this.expectedLevel = expectedLevel
     }
 
 
-    getEncounterXpPerPlayer(playersLevel = 1, numberOfPlayers = 4)
+    getEncounterXpPerPlayer()
     {
         let xpTotal = 0
 
         for (let creature of this.creatures) {
-            let relativeLvl = creature.level - playersLevel
+            let relativeLvl = creature.level - this.expectedLevel
 
             if (relativeLvl > 4) return EncounterRating.IMPOSSIBLE
 
@@ -27,15 +29,15 @@ export class FightComponent
             }
         }
 
-        xpTotal *= numberOfPlayers / 4
+        xpTotal *= this.expectedPlayers / 4
 
         return xpTotal
     }
 
 
-    getEncounterRating(playersLevel = 1, numberOfPlayers = 4)
+    getEncounterRating()
     {
-        let xpPerPlayer = this.getEncounterXpPerPlayer(playersLevel, numberOfPlayers)
+        let xpPerPlayer = this.getEncounterXpPerPlayer()
 
         let minValue = 200
         let minKey = null
@@ -52,6 +54,8 @@ export class FightComponent
     exportToJSON() {
         let object = {
             type: ComponentType.FIGHT,
+            expectedLevel: this.expectedLevel,
+            expectedPlayers: this.expectedPlayers,
             creatures: []
         }
 
@@ -64,7 +68,7 @@ export class FightComponent
 
 
     static importFromJSON(data) {
-        let result = new FightComponent()
+        let result = new FightComponent(data.expectedPlayers || 4, data.expectedLevel || 1)
         for (let c of data.creatures) {
             result.creatures.push(Creature.importFromJSON(c))
         }

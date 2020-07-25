@@ -12,7 +12,25 @@ export class Session
         this.name = name
 
         this.params = Object.assign({
-            autoLevelUp: false
+            autoLevelUp: false,
+            players: [
+                {
+                    name: "Player 1",
+                    xp: 0
+                },
+                {
+                    name: "Player 2",
+                    xp: 0
+                },
+                {
+                    name: "Player 3",
+                    xp: 0
+                },
+                {
+                    name: "Player 4",
+                    xp: 0
+                },
+            ]
         }, params)
 
         this.encounters = []
@@ -106,6 +124,11 @@ export class Session
         }
 
         return JSON.stringify(object)
+    }
+
+
+    getPlayerGroupXp() {
+        return Math.min(...this.params.players.map(p => Math.floor(p.xp / 1000) + 1))
     }
 
 

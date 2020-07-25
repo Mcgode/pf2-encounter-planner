@@ -32,18 +32,20 @@
 
     class FightComponent
     {
-        constructor() {
+        constructor(expectedPlayers = 4, expectedLevel = 1) {
             this.type = ComponentType.FIGHT;
             this.creatures = [];
+            this.expectedPlayers = expectedPlayers;
+            this.expectedLevel = expectedLevel;
         }
 
 
-        getEncounterXpPerPlayer(playersLevel = 1, numberOfPlayers = 4)
+        getEncounterXpPerPlayer()
         {
             let xpTotal = 0;
 
             for (let creature of this.creatures) {
-                let relativeLvl = creature.level - playersLevel;
+                let relativeLvl = creature.level - this.expectedLevel;
 
                 if (relativeLvl > 4) return EncounterRating.IMPOSSIBLE
 
@@ -52,15 +54,15 @@
                 }
             }
 
-            xpTotal *= numberOfPlayers / 4;
+            xpTotal *= this.expectedPlayers / 4;
 
             return xpTotal
         }
 
 
-        getEncounterRating(playersLevel = 1, numberOfPlayers = 4)
+        getEncounterRating()
         {
-            let xpPerPlayer = this.getEncounterXpPerPlayer(playersLevel, numberOfPlayers);
+            let xpPerPlayer = this.getEncounterXpPerPlayer();
 
             let minValue = 200;
             let minKey = null;
@@ -77,6 +79,8 @@
         exportToJSON() {
             let object = {
                 type: ComponentType.FIGHT,
+                expectedLevel: this.expectedLevel,
+                expectedPlayers: this.expectedPlayers,
                 creatures: []
             };
 
@@ -89,7 +93,7 @@
 
 
         static importFromJSON(data) {
-            let result = new FightComponent();
+            let result = new FightComponent(data.expectedPlayers || 4, data.expectedLevel || 1);
             for (let c of data.creatures) {
                 result.creatures.push(Creature.importFromJSON(c));
             }
@@ -169,7 +173,7 @@
         }
 
 
-        getEncounterXpPerPlayer(_ = null, __ = null) {
+        getEncounterXpPerPlayer() {
             switch (this.level) {
                 case AccomplishmentLevel.MAJOR:
                     return 80
@@ -209,18 +213,19 @@
      */
 
     class HazardComponent {
-        constructor() {
+        constructor(expectedLevel = 1) {
             this.type = ComponentType.HAZARD;
+            this.expectedLevel = expectedLevel;
             this.hazards = [];
         }
 
 
-        getEncounterXpPerPlayer(playersLevel = 1, _ = null)
+        getEncounterXpPerPlayer()
         {
             let xpTotal = 0;
 
             for (let hazard of this.hazards) {
-                let relativeLvl = hazard.level - playersLevel;
+                let relativeLvl = hazard.level - this.expectedLevel;
 
                 if (relativeLvl > 4) return null
 
@@ -236,7 +241,8 @@
         exportToJSON() {
             let object = {
                 type: ComponentType.HAZARD,
-                hazards: []
+                hazards: [],
+                expectedLevel: this.expectedLevel,
             };
 
             for (let creature of this.hazards) {
@@ -248,7 +254,7 @@
 
 
         static importFromJSON(data) {
-            let result = new HazardComponent();
+            let result = new HazardComponent(data.expectedLevel || 1);
             for (let c of data.creatures) {
                 result.hazards.push(Hazard.importFromJSON(c));
             }
@@ -311,7 +317,7 @@
             this.xp = xp;
         }
 
-        getEncounterXpPerPlayer(_ = null, __ = null) {
+        getEncounterXpPerPlayer() {
             return this.xp
         }
 
@@ -451,7 +457,25 @@
             this.name = name;
 
             this.params = Object.assign({
-                autoLevelUp: false
+                autoLevelUp: false,
+                players: [
+                    {
+                        name: "Player 1",
+                        xp: 0
+                    },
+                    {
+                        name: "Player 2",
+                        xp: 0
+                    },
+                    {
+                        name: "Player 3",
+                        xp: 0
+                    },
+                    {
+                        name: "Player 4",
+                        xp: 0
+                    },
+                ]
             }, params);
 
             this.encounters = [];
@@ -545,6 +569,11 @@
             }
 
             return JSON.stringify(object)
+        }
+
+
+        getPlayerGroupXp() {
+            return Math.min(...this.params.players.map(p => Math.floor(p.xp / 1000) + 1))
         }
 
 

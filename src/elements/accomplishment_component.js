@@ -13,7 +13,7 @@ export class AccomplishmentComponent
     }
 
 
-    getEncounterXpPerPlayer(_ = null, __ = null) {
+    getEncounterXpPerPlayer() {
         switch (this.level) {
             case AccomplishmentLevel.MAJOR:
                 return 80

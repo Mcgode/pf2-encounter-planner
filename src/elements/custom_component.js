@@ -12,7 +12,7 @@ export class CustomComponent
         this.xp = xp
     }
 
-    getEncounterXpPerPlayer(_ = null, __ = null) {
+    getEncounterXpPerPlayer() {
         return this.xp
     }
 
