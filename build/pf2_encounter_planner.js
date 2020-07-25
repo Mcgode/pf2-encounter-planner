@@ -99,16 +99,30 @@
             }
             return result
         }
+
+
+        getNewCreatureId()
+        {
+            let found = false;
+            do {
+                let id = Math.floor(Number.MAX_SAFE_INTEGER * Math.random());
+                for (let creature of this.creatures) {
+                    if (creature.id === id) { found = true; break }
+                }
+            } while (found)
+            return id
+        }
     }
 
 
     class Creature
     {
-        constructor(name, level, amount, link = null) {
+        constructor(name, level, amount, link = null, id = null) {
             this.name = name;
-            this.level = level == null ? 0 : level;
-            this.amount = amount == null ? 1 : amount;
+            this.level = level;
+            this.amount = amount;
             this.link = link;
+            this.id = null;
         }
 
 
@@ -118,13 +132,14 @@
                 name: this.name,
                 level: this.level,
                 amount: this.amount,
-                link: this.link
+                link: this.link,
+                id: this.id
             }
         }
 
 
         static importFromJSON(data) {
-            return new Creature(data.name, data.leadingComments, data.amount, data.link)
+            return new Creature(data.name, data.leadingComments, data.amount, data.link, data.id)
         }
     }
 
