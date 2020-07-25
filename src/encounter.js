@@ -1,5 +1,5 @@
 /**
- * @file encounter.js
+ * @file element.js
  * @author Max Godefroy <max@godefroy.net>
  */
 import { EncounterElement } from "./elements/encounter_element";
@@ -16,7 +16,7 @@ export class Encounter
 
     static getIdFriendlyName(name)
     {
-        return "encounter-" + name.toLowerCase().split(/[^a-z0-9]/).filter((s) => s.length > 0).join("-")
+        return "element-" + name.toLowerCase().split(/[^a-z0-9]/).filter((s) => s.length > 0).join("-")
     }
 
 

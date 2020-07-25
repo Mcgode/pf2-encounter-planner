@@ -3,6 +3,7 @@
  * @author Max Godefroy <max@godefroy.net>
  */
 import {Encounter} from "./encounter";
+import {TimelineEvent} from "./timeline_event";
 
 
 export class Session
@@ -42,6 +43,7 @@ export class Session
         }, params)
 
         this.encounters = []
+        this.timelineEvents = []
     }
 
 
@@ -124,11 +126,16 @@ export class Session
         let object = {
             params: this.params,
             name: this.name,
-            encounters: []
+            encounters: [],
+            timelineEvents: []
         }
 
         for (let encounter of this.encounters) {
             object.encounters.push(encounter.exportToJSON())
+        }
+
+        for (let event of this.timelineEvents) {
+            object.timelineEvents.push(event.exportToJSON())
         }
 
         return JSON.stringify(object)
@@ -157,13 +164,38 @@ export class Session
     }
 
 
+    findElementById(id) {
+        return this.encounters.flatMap(e => e.elements).find(e => e.id === id)
+    }
+
+
+    addTimelineEvent(index, element, levelUp = false)
+    {
+        let id, found;
+        do {
+            id = 'event-' + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
+            found = this.timelineEvents.find(e => e.id === id) != null
+        } while (found)
+
+        let event = new TimelineEvent(id, this.params.players.map(p => p.id), element, levelUp)
+        this.timelineEvents.splice(index, 0, event)
+        return event
+    }
+
+
     static importFromJSON(jsonData) {
         let object = JSON.parse(jsonData)
 
         let result = new Session(object.name, object.params)
+
         for (let e of object.encounters) {
             result.encounters.push(Encounter.importFromJSON(e))
         }
+
+        for (let e of object.timelineEvents) {
+            result.timelineEvents.push(TimelineEvent.importFromJSON(e, result))
+        }
+
         return result
     }
 
