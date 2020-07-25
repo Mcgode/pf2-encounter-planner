@@ -42,8 +42,8 @@ export class Session
     {
         let encounter = this.encounters.find(e => e.name === encounterName)
         if (encounter != null) {
-            encounter.elements.push(element)
             element.registerToSession(this)
+            encounter.elements.push(element)
         }
         this.saveSession()
         return encounter != null
