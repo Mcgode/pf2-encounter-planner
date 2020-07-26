@@ -298,6 +298,7 @@
         let selectedElement = null
         let selectedTab = PF2EncounterPlanner.ComponentType.CUSTOM
         let selectedPlayer = null
+        let selectedEvent = null
 
         let tmpFightComponent = null
         let tmpHazardComponent = null
@@ -1039,9 +1040,12 @@
         {
             let text = event.levelUp ? "LEVEL UP!" : (event.element != null ? getElementText(event.element) : "Error loading timeline event data")
 
-            return $('<a class="list-group-item"></a>')
+            return $('<a class="list-group-item list-group-item-action"></a>')
                 .prop("id", `${event.id}-item`)
                 .html(text)
+                .click(_ => {
+                     selectEvent(selectedEvent != null && selectedEvent.id  === event.id ? null : event)
+                })
         }
 
 
@@ -1055,6 +1059,17 @@
             }
 
             $(addEvent.item).remove()
+        }
+
+
+        function selectEvent(event)
+        {
+            if (selectedEvent != null)
+                $(`#${selectedEvent.id}-item`).removeClass('active')
+
+            selectedEvent = event
+            if (event != null)
+                $(`#${event.id}-item`).addClass('active')
         }
 
 
