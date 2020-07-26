@@ -1189,13 +1189,23 @@
 
             for (let player of session.params.players) {
                 let history = index == null ?
-                    session.timeline.playerHistory[player.id].last() :
-                    session.timeline.playerHistory[player.id].filter(h => h.index <= index).last()
+                    session.timeline.playerHistory[player.id] :
+                    session.timeline.playerHistory[player.id].filter(h => h.index <= index)
 
-                $(`#${player.id}-status-level`).text(`[Lvl ${history.level}]`)
-                $(`#${player.id}-status-xp`).text(`${history.xp} xp`)
+                let latestHistory = history.last()
+                let previousHistory = latestHistory.index === index && history.length > 1 ? history[history.length - 2] : null
 
-                let progress = Math.min(history.xp, 1000)
+                if (previousHistory && latestHistory.level > previousHistory.level)
+                    $(`#${player.id}-status-level`).html(`[Lvl${previousHistory.level} &rarr; Lvl ${latestHistory.level}]`)
+                else
+                    $(`#${player.id}-status-level`).text(`[Lvl ${latestHistory.level}]`)
+
+                if (previousHistory && (previousHistory.level !== latestHistory.level || previousHistory.xp !== latestHistory.xp))
+                    $(`#${player.id}-status-xp`).html(`${previousHistory.xp} xp &rarr; ${latestHistory.xp} xp`)
+                else
+                    $(`#${player.id}-status-xp`).text(`${latestHistory.xp} xp`)
+
+                let progress = Math.min(latestHistory.xp, 1000)
                 let p = progress / 1000, q = 1 - p;
                 let color = [...Array(3).keys()].map(i => { return startColor[i] * q + endColor[i] * p })
 
