@@ -12,21 +12,21 @@
 
 <body>
     <!-- Body content -->
-    <div class="content">
+    <div class="content d-flex flex-column vh-100">
         <ul class="nav nav-tabs" id="mainTab" role="tablist">
             <li class="nav-item">
-                <a class="nav-link" id="planner-tab" data-toggle="tab" href="#planner" role="tab" aria-controls="planner" aria-selected="false">Encounter planner</a>
+                <a class="nav-link active" id="planner-tab" data-toggle="tab" href="#planner" role="tab" aria-controls="planner" aria-selected="true">Encounter planner</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link active" id="history-tab" data-toggle="tab" href="#history" role="tab" aria-controls="history" aria-selected="true">Encounter history</a>
+                <a class="nav-link" id="history-tab" data-toggle="tab" href="#history" role="tab" aria-controls="history" aria-selected="false">Encounter history</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" id="settings-tab" data-toggle="tab" href="#settings" role="tab" aria-controls="settings" aria-selected="false">Session settings</a>
             </li>
         </ul>
 
-        <div class="tab-content" id="mainContent">
-            <div class="tab-pane fade" id="planner" role="tabpanel" aria-labelledby="planner-tab">
+        <div class="tab-content flex-fill" id="mainContent">
+            <div class="tab-pane fade show active" id="planner" role="tabpanel" aria-labelledby="planner-tab">
                 <h1>Encounter planner</h1>
 
                 <div class="accordion" id="encountersAccordion">
@@ -204,26 +204,28 @@
                 </div>
             </div>
 
-            <div class="tab-pane fade show active" id="history" role="tabpanel" aria-labelledby="history-tab">
-                <div id="history-content">
-                    <div id="history-source" class="card card-body">
-                        <div class="accordion" id="encountersSourceAccordion"></div>
-                    </div>
-
-                    <div id="history-timeline">
-                        <div id="timeline-container">
-                            <div class="list-group" id="timeline" role="tablist"></div>
+            <div class="tab-pane fade container-fluid" id="history" role="tabpanel" aria-labelledby="history-tab" style="height: 90vh">
+                <div class=" d-flex flex-column h-100">
+                    <div class="row flex-fill">
+                        <div class="col">
+                            <div class="accordion" id="encountersSourceAccordion"></div>
                         </div>
 
-                        <div id="timeline-delete-zone-container">
-                            <div id="timeline-delete-zone"></div>
-                            <h2 id="timeline-delete-zone-background" class="background"></h2>
+                        <div id="history-timeline" class="col d-flex flex-column">
+                            <div id="timeline-container" class="flex-fill position-relative">
+                                <div class="list-group h-100" id="timeline" role="tablist"></div>
+                            </div>
+
+                            <div id="timeline-delete-zone-container" class="position-relative">
+                                <div id="timeline-delete-zone" style="height: 6em"></div>
+                                <h2 id="timeline-delete-zone-background" class="background"></h2>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <div id="history-control">
-
+                    Hello world I'm controls
                 </div>
             </div>
 
@@ -1075,7 +1077,9 @@
             let id = addEvent.item.id.replace('-item', '')
             session.timeline.deleteEvent(id)
 
-            $(addEvent.item).remove()
+            $(addEvent.item)
+                .tooltip('dispose')
+                .remove()
         }
 
 
@@ -1256,6 +1260,7 @@
 
 
         $('#history-tab').on("show.bs.tab", setSourceEncounters)
+            .tab('show')
 
         Sortable.create(document.getElementById('timeline'), {
             group: 'history-shared',

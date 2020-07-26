@@ -579,6 +579,10 @@
         {
             this.events = events == null ? [] : events;
             this.session = session;
+            
+            this.playerHistory = {};
+            this.errorEvents = [];
+            this.xpChange = {};
 
             if (events.length > 0)
                 this.computeTimeline();
