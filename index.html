@@ -206,7 +206,7 @@
 
             <div class="tab-pane fade container-fluid" id="history" role="tabpanel" aria-labelledby="history-tab" style="height: 90vh">
                 <div class=" d-flex flex-column h-100">
-                    <div class="row flex-fill">
+                    <div class="row flex-fill overflow-auto btn-top-margin">
                         <div class="col">
                             <div class="accordion" id="encountersSourceAccordion"></div>
                         </div>
@@ -216,16 +216,16 @@
                                 <div class="list-group h-100" id="timeline" role="tablist"></div>
                             </div>
 
-                            <div id="timeline-delete-zone-container" class="position-relative">
+                            <div id="timeline-delete-zone-container" class="position-relative btn-top-margin">
                                 <div id="timeline-delete-zone" style="height: 6em"></div>
                                 <h2 id="timeline-delete-zone-background" class="background"></h2>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div id="history-control">
-                    Hello world I'm controls
+                    <div id="history-control" class="border-top">
+                        <div id="playersStatus" class="list-group"></div>
+                    </div>
                 </div>
             </div>
 
@@ -1184,6 +1184,15 @@
             session.saveSession()
         }
 
+        function onResize(_)
+        {
+            let height = $("body div").height()
+            let tabsHeight = $("#mainTab").outerHeight()
+
+            console.log(height - tabsHeight)
+            $('#history').outerHeight(height - tabsHeight, true)
+        }
+
 
         Sortable.create(document.getElementById('encountersAccordion'), {
             animation: 150,
@@ -1294,6 +1303,9 @@
 
         for (let player of session.params.players)
             addPlayer(player)
+
+        window.onresize = onResize
+        onResize()
     </script>
 </body>
 </html>
