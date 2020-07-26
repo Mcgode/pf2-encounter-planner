@@ -196,6 +196,9 @@ export class Session
     static makeSession(name = 'Default') {
         let data = window.localStorage.getItem(`session:${name}`)
 
-        return data == null ? new Session(name) : Session.importFromJSON(data)
+        let session = data == null ? new Session(name) : Session.importFromJSON(data)
+        if (data == null)
+            session.timeline = new Timeline(session)
+        return session
     }
 }
