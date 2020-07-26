@@ -229,8 +229,9 @@
                         </div>
                     </div>
 
-                    <div id="history-control" class="border-top">
+                    <div id="history-control" class="border-top row">
                         <div id="playersStatus" class="list-group col-sm-4"></div>
+                        <div id="selectedPlayers" class="col-sm-4 overflow-auto flex-column h-100"></div>
                     </div>
                 </div>
             </div>
@@ -955,6 +956,8 @@
             setSourceEncounters()
 
             let playerStatus = $("#playersStatus").empty()
+            let selectedPlayers = $('#selectedPlayers').empty()
+
             for (let player of session.params.players) {
                 playerStatus.append(
                     $('<div></div>')
@@ -984,9 +987,37 @@
                         )
 
                 )
+
+                selectedPlayers.append(
+                    $('<div></div>')
+                        .addClass('form-group form-check')
+                        .append(
+                            $('<input>')
+                                .addClass('form-check-input')
+                                .prop('id', `${player.id}-select-input`)
+                                .attr('type', 'checkbox')
+                                .change(function() {
+                                    if (selectedEvent) {
+                                        let checked = $(this).prop('checked')
+                                        if (checked) {
+                                            selectedEvent.players.push(player.id)
+                                        } else {
+                                            let index = selectedEvent.players.findIndex(p => p === player.id)
+                                            if (index >= 0) selectedEvent.players.splice(index, 1)
+                                        }
+                                        session.saveSession()
+                                        session.timeline.computeTimeline    ()
+                                    }
+                                }),
+                            $('<label></label>')
+                                .addClass('form-check-label')
+                                .prop('for', `${player.id}-select-input`)
+                                .text(player.name)
+                        )
+                )
             }
 
-            refreshPlayerStatus()
+            refreshHistoryControls()
         }
 
 
@@ -1111,7 +1142,7 @@
                 .tooltip()
                 .click(_ => {
                      selectEvent(selectedEvent != null && selectedEvent.id  === event.id ? null : event)
-                    refreshPlayerStatus()
+                    refreshHistoryControls()
                 })
 
             if (event.levelUp) {
@@ -1180,7 +1211,7 @@
         }
 
 
-        function refreshPlayerStatus()
+        function refreshHistoryControls()
         {
             let index = selectedEvent != null ? session.timeline.events.findIndex(e => e.id === selectedEvent.id) : null
 
@@ -1213,6 +1244,10 @@
                     .attr('aria-valuenow', progress)
                     .css('width', `${progress / 10}%`)
                     .css('background-color', `rgb(${color.toString()})`)
+
+                $(`#${player.id}-select-input`)
+                    .prop('disabled', selectedEvent == null)
+                    .prop('checked', selectedEvent != null && selectedEvent.players.find(p => p === player.id) != null)
             }
         }
 
@@ -1375,7 +1410,6 @@
 
 
         $('#history-tab').on("show.bs.tab", refreshEncountersHistoryPage())
-            .tab('show')
 
         Sortable.create(document.getElementById('levelUpList'), {
             group: {
@@ -1406,7 +1440,7 @@
 
         session.timeline.listener = _ => {
             showEventsWithErrors()
-            refreshPlayerStatus()
+            refreshHistoryControls()
         }
         showEventsWithErrors()
 
