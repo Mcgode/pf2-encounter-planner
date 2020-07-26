@@ -13,7 +13,7 @@ export class CustomComponent
     }
 
     getEncounterXpPerPlayer() {
-        return this.xp
+        return parseInt(this.xp)
     }
 
 

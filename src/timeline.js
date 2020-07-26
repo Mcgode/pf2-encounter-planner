@@ -18,8 +18,7 @@ export class Timeline
         this.errorEvents = []
         this.xpChange = {}
 
-        if (events.length > 0)
-            this.computeTimeline()
+        this.computeTimeline()
 
         this.listener = null
     }

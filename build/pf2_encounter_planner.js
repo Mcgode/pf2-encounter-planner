@@ -401,7 +401,7 @@
         }
 
         getEncounterXpPerPlayer() {
-            return this.xp
+            return parseInt(this.xp)
         }
 
 
@@ -579,13 +579,12 @@
         {
             this.events = events == null ? [] : events;
             this.session = session;
-            
+
             this.playerHistory = {};
             this.errorEvents = [];
             this.xpChange = {};
 
-            if (events.length > 0)
-                this.computeTimeline();
+            this.computeTimeline();
 
             this.listener = null;
         }
