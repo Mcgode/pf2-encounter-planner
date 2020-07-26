@@ -1334,7 +1334,6 @@
             let height = $("body div").height()
             let tabsHeight = $("#mainTab").outerHeight()
 
-            console.log(height - tabsHeight)
             $('#history').outerHeight(height - tabsHeight, true)
         }
 
@@ -1413,7 +1412,7 @@
         })
 
 
-        $('#history-tab').on("show.bs.tab", refreshEncountersHistoryPage())
+        $('#history-tab').on("show.bs.tab", refreshEncountersHistoryPage)
 
         Sortable.create(document.getElementById('levelUpList'), {
             group: {
