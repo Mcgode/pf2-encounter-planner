@@ -121,6 +121,21 @@
         copy() {
             return FightComponent.importFromJSON(this.exportToJSON())
         }
+
+
+        getTooltip()
+        {
+            let result = [];
+
+            for (let creature of this.creatures) {
+                let htmlText = creature.name != null && creature.name.length > 0 ? creature.name : "Unnamed creature";
+                htmlText = `<strong>[Lvl ${creature.level != null ? creature.level : "?"}]</strong> ` + htmlText;
+                htmlText += ` &times; ${creature.amount != null ? creature.amount : "?"}`;
+                result.push(htmlText);
+            }
+
+            return result.join("<br />")
+        }
     }
 
 
@@ -194,6 +209,12 @@
         constructor(level = AccomplishmentLevel.MINOR) {
             this.type = ComponentType.ACCOMPLISHMENT;
             this.level = level;
+        }
+
+
+        getTooltip()
+        {
+            return this.level
         }
 
 
@@ -305,6 +326,21 @@
         copy() {
             return HazardComponent.importFromJSON(this.exportToJSON())
         }
+
+
+        getTooltip()
+        {
+            let result = [];
+
+            for (let hazard of this.hazards) {
+                let htmlText = hazard.name != null && hazard.name.length > 0 ? hazard.name : "Unnamed hazard";
+                htmlText = `<strong>[Lvl ${hazard.level != null ? hazard.level : "?"}]</strong> ` + htmlText;
+                htmlText += ` &times; ${hazard.amount != null ? hazard.amount : "?"}`;
+                result.push(htmlText);
+            }
+
+            return result.join("<br />")
+        }
     }
 
 
@@ -366,6 +402,12 @@
 
         getEncounterXpPerPlayer() {
             return this.xp
+        }
+
+
+        getTooltip()
+        {
+            return ""
         }
 
 
@@ -547,8 +589,12 @@
 
         addEvent(index, elementId, levelUp = false)
         {
-            let element = session.findElementById(elementId);
-            if (element == null) return null
+            let element;
+
+            if (!levelUp) {
+                element = session.findElementById(elementId);
+                if (element == null) return null
+            }
 
             let id, found;
             do {
@@ -602,7 +648,7 @@
                 if (event.levelUp) {
                     let leveledUp = false;
                     for (let player of event.players) {
-                        let history = this.playerHistory[player.id];
+                        let history = this.playerHistory[player];
                         if (history && history.last().xp >= 1000) {
                             history.push({
                                 index: index,
@@ -614,7 +660,7 @@
                     }
 
                     if (!leveledUp)
-                        this.errorEvents.push(event);
+                        this.errorEvents.push({event: event, reason: "No player could level up"});
                 } else {
                     if (event.element != null && event.element.component != null) {
                         let component = event.element.component;
@@ -636,7 +682,7 @@
                                     component.expectedLevel = level; component.expectedPlayers = players.length;
                                     let rating = component.getEncounterRating();
                                     if (rating === EncounterRating.IMPOSSIBLE) {
-                                        this.errorEvents.push(event);
+                                        this.errorEvents.push({event: event, reason: "Impossible encounter"});
                                         xp = null;
                                     } else {
                                         xp = component.getEncounterXpPerPlayer();
@@ -665,11 +711,10 @@
                                 });
                             }
                         } else {
-                            console.log("No players for event " + event.element.name);
-                            this.errorEvents.push(event);
+                            this.errorEvents.push({event: event, reason: "No player for this event"});
                         }
                     } else {
-                        this.errorEvents.push(event);
+                        this.errorEvents.push({event: event, reason: "Invalid event"});
                     }
                 }
 

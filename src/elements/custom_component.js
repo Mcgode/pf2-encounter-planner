@@ -17,6 +17,12 @@ export class CustomComponent
     }
 
 
+    getTooltip()
+    {
+        return ""
+    }
+
+
     exportToJSON() {
         return {
             type: this.type,

@@ -1043,9 +1043,19 @@
             text = text.replace(/, [?0-9]+ xp/, '')
             let xpChange = session.timeline.xpChange[event.id]
 
+            let tooltip;
+            if (event.element != null && event.element.component != null)
+                tooltip = event.element.component.getTooltip()
+            tooltip = tooltip || ""
+
             return $('<a></a>')
                 .addClass('mb-0 accordion-card-header list-group-item list-group-item-action')
                 .prop("id", `${event.id}-item`)
+                .attr('data-original-title', tooltip)
+                .attr('data-html', true)
+                .data('title', tooltip)
+                .attr("data-toggle", "tooltip")
+                .tooltip()
                 .append(
                     $('<a></a>')
                         .addClass('text-left largest-button')
@@ -1085,10 +1095,14 @@
             $('#timeline')
                 .find('a')
                 .removeClass('list-group-item-danger')
+                .each(function() {
+                    $(this).attr('data-original-title', $(this).data('title'))
+                })
 
-            for (let event of session.timeline.errorEvents) {
-                $(`#${event.id}-item`)
+            for (let eventError of session.timeline.errorEvents) {
+                $(`#${eventError.event.id}-item`)
                     .addClass('list-group-item-danger')
+                    .attr('data-original-title', eventError.reason)
             }
         }
 

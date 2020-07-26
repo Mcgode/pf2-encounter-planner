@@ -96,6 +96,21 @@ export class FightComponent
     copy() {
         return FightComponent.importFromJSON(this.exportToJSON())
     }
+
+
+    getTooltip()
+    {
+        let result = []
+
+        for (let creature of this.creatures) {
+            let htmlText = creature.name != null && creature.name.length > 0 ? creature.name : "Unnamed creature";
+            htmlText = `<strong>[Lvl ${creature.level != null ? creature.level : "?"}]</strong> ` + htmlText;
+            htmlText += ` &times; ${creature.amount != null ? creature.amount : "?"}`;
+            result.push(htmlText)
+        }
+
+        return result.join("<br />")
+    }
 }
 
 

@@ -23,8 +23,12 @@ export class Timeline
 
     addEvent(index, elementId, levelUp = false)
     {
-        let element = session.findElementById(elementId)
-        if (element == null) return null
+        let element;
+
+        if (!levelUp) {
+            element = session.findElementById(elementId)
+            if (element == null) return null
+        }
 
         let id, found;
         do {
@@ -78,7 +82,7 @@ export class Timeline
             if (event.levelUp) {
                 let leveledUp = false
                 for (let player of event.players) {
-                    let history = this.playerHistory[player.id]
+                    let history = this.playerHistory[player]
                     if (history && history.last().xp >= 1000) {
                         history.push({
                             index: index,
@@ -90,7 +94,7 @@ export class Timeline
                 }
 
                 if (!leveledUp)
-                    this.errorEvents.push(event)
+                    this.errorEvents.push({event: event, reason: "No player could level up"})
             } else {
                 if (event.element != null && event.element.component != null) {
                     let component = event.element.component
@@ -112,7 +116,7 @@ export class Timeline
                                 component.expectedLevel = level; component.expectedPlayers = players.length
                                 let rating = component.getEncounterRating()
                                 if (rating === EncounterRating.IMPOSSIBLE) {
-                                    this.errorEvents.push(event)
+                                    this.errorEvents.push({event: event, reason: "Impossible encounter"})
                                     xp = null
                                 } else {
                                     xp = component.getEncounterXpPerPlayer()
@@ -141,11 +145,10 @@ export class Timeline
                             })
                         }
                     } else {
-                        console.log("No players for event " + event.element.name)
-                        this.errorEvents.push(event)
+                        this.errorEvents.push({event: event, reason: "No player for this event"})
                     }
                 } else {
-                    this.errorEvents.push(event)
+                    this.errorEvents.push({event: event, reason: "Invalid event"})
                 }
             }
 

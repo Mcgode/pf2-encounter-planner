@@ -74,6 +74,21 @@ export class HazardComponent {
     copy() {
         return HazardComponent.importFromJSON(this.exportToJSON())
     }
+
+
+    getTooltip()
+    {
+        let result = []
+
+        for (let hazard of this.hazards) {
+            let htmlText = hazard.name != null && hazard.name.length > 0 ? hazard.name : "Unnamed hazard";
+            htmlText = `<strong>[Lvl ${hazard.level != null ? hazard.level : "?"}]</strong> ` + htmlText;
+            htmlText += ` &times; ${hazard.amount != null ? hazard.amount : "?"}`;
+            result.push(htmlText)
+        }
+
+        return result.join("<br />")
+    }
 }
 
 

@@ -13,6 +13,12 @@ export class AccomplishmentComponent
     }
 
 
+    getTooltip()
+    {
+        return this.level
+    }
+
+
     getEncounterXpPerPlayer() {
         switch (this.level) {
             case AccomplishmentLevel.MAJOR:
