@@ -497,14 +497,18 @@
 
             $('#elementName').val(selectedElement == null ? "" : selectedElement.name)
 
+            let expectedLevel = session.getPlayerGroupLevel(
+                Object.values(session.timeline.playerHistory).map(h => h.last())
+            )
+
             let elementCustomXp = $('#elementCustomXp').val(null)
-            let fightExpectedLevel = $('#fightExpectedPlayerLevel').val(session.getPlayerGroupLevel())
+            let fightExpectedLevel = $('#fightExpectedPlayerLevel').val(expectedLevel)
             let expectedPlayers = $(`#fightPlayerExpectedAmount`).val(session.params.players.length)
             let fightXp = $('#fightXpLabel').text("?xp")
             setRating(PF2EncounterPlanner.EncounterRating.TRIVIAL)
             $('#elementCreatureAccordion').empty()
             let elementAccomplishmentLevel = $('#elementAccomplishmentLevel').val(PF2EncounterPlanner.AccomplishmentLevel.MINOR)
-            let hazardExpectedLevel = $('#hazardExpectedPlayerLevel').val(session.getPlayerGroupLevel())
+            let hazardExpectedLevel = $('#hazardExpectedPlayerLevel').val(expectedLevel)
             let hazardXp = $('#hazardXpLabel').text("?xp")
             $('#elementHazardAccordion').empty()
 
@@ -545,8 +549,8 @@
                 }
             }
 
-            if (tmpFightComponent == null) tmpFightComponent = new PF2EncounterPlanner.FightComponent(session.params.players.length, session.getPlayerGroupLevel())
-            if (tmpHazardComponent == null) tmpHazardComponent = new PF2EncounterPlanner.HazardComponent(session.getPlayerGroupLevel())
+            if (tmpFightComponent == null) tmpFightComponent = new PF2EncounterPlanner.FightComponent(session.params.players.length, expectedLevel)
+            if (tmpHazardComponent == null) tmpHazardComponent = new PF2EncounterPlanner.HazardComponent(expectedLevel)
         }
 
 
