@@ -12,251 +12,272 @@
 
 <body>
     <!-- Body content -->
-    <ul class="nav nav-tabs" id="mainTab" role="tablist">
-        <li class="nav-item">
-            <a class="nav-link active" id="planner-tab" data-toggle="tab" href="#planner" role="tab" aria-controls="planner" aria-selected="true">Encounter planner</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" id="history-tab" data-toggle="tab" href="#history" role="tab" aria-controls="history" aria-selected="false">Encounter history</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" id="settings-tab" data-toggle="tab" href="#settings" role="tab" aria-controls="settings" aria-selected="false">Session settings</a>
-        </li>
-    </ul>
+    <div class="content">
+        <ul class="nav nav-tabs" id="mainTab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link" id="planner-tab" data-toggle="tab" href="#planner" role="tab" aria-controls="planner" aria-selected="false">Encounter planner</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" id="history-tab" data-toggle="tab" href="#history" role="tab" aria-controls="history" aria-selected="true">Encounter history</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="settings-tab" data-toggle="tab" href="#settings" role="tab" aria-controls="settings" aria-selected="false">Session settings</a>
+            </li>
+        </ul>
 
-    <div class="tab-content" id="mainContent">
-        <div class="tab-pane fade show active" id="planner" role="tabpanel" aria-labelledby="planner-tab">
-            <h1>Encounter planner</h1>
+        <div class="tab-content" id="mainContent">
+            <div class="tab-pane fade" id="planner" role="tabpanel" aria-labelledby="planner-tab">
+                <h1>Encounter planner</h1>
 
-            <div class="accordion" id="encountersAccordion">
-            </div>
+                <div class="accordion" id="encountersAccordion">
+                </div>
 
-            <button class="btn btn-outline-primary" data-toggle="modal" data-target="#addEncounterModal">
-                Add new encounter
-            </button>
+                <button class="btn btn-outline-primary" data-toggle="modal" data-target="#addEncounterModal">
+                    Add new encounter
+                </button>
 
-            <div class="modal fade" id="addEncounterModal" tabindex="-1" role="dialog" aria-labelledby="addEncounterModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="addEncounterModalLabel">Add a new encounter</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <form id="addEncounterForm" action="javascript:addEncounter(encounterName.value)">
-                                <div class="form-group">
-                                    <label for="encounterName" class="col-form-label">Encounter name:</label>
-                                    <input type="text" class="form-control" id="encounterName" name="encounterName">
-                                </div>
-                            </form>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary" onclick="document.forms['addEncounterForm'].submit()">
-                                Add encounter
-                            </button>
+                <div class="modal fade" id="addEncounterModal" tabindex="-1" role="dialog" aria-labelledby="addEncounterModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="addEncounterModalLabel">Add a new encounter</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="addEncounterForm" action="javascript:addEncounter(encounterName.value)">
+                                    <div class="form-group">
+                                        <label for="encounterName" class="col-form-label">Encounter name:</label>
+                                        <input type="text" class="form-control" id="encounterName" name="encounterName">
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" onclick="document.forms['addEncounterForm'].submit()">
+                                    Add encounter
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="modal fade" id="renameEncounterModal" tabindex="-1" role="dialog" aria-labelledby="renameEncounterModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="renameEncounterModalLabel">Rename the encounter</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <form id="renameEncounterForm" action="javascript:renameEncounter(encounterNewName.value)">
-                                <div class="form-group">
-                                    <label for="encounterNewName" class="col-form-label">Encounter name:</label>
-                                    <input type="text" class="form-control" id="encounterNewName" name="encounterNewName">
-                                </div>
-                            </form>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary" onclick="document.forms['renameEncounterForm'].submit()">
-                                Rename encounter
-                            </button>
+                <div class="modal fade" id="renameEncounterModal" tabindex="-1" role="dialog" aria-labelledby="renameEncounterModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="renameEncounterModalLabel">Rename the encounter</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="renameEncounterForm" action="javascript:renameEncounter(encounterNewName.value)">
+                                    <div class="form-group">
+                                        <label for="encounterNewName" class="col-form-label">Encounter name:</label>
+                                        <input type="text" class="form-control" id="encounterNewName" name="encounterNewName">
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" onclick="document.forms['renameEncounterForm'].submit()">
+                                    Rename encounter
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="modal fade" id="setElementModal" tabindex="-1" role="dialog" aria-labelledby="setElementModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="setElementModalLabel">Add an encounter element</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <form id="setElementModalForm" action="javascript:confirmElementData">
-                                <div class="form-group">
-                                    <label for="elementName" class="col-form-label">Encounter element name:</label>
-                                    <input type="text" class="form-control" id="elementName" name="elementName">
-                                </div>
-
-                                <ul class="nav nav-tabs" id="elementTab" role="tablist">
-                                    <li class="nav-item">
-                                        <a class="nav-link active" id="custom-tab" data-toggle="tab" href="#custom" role="tab" aria-controls="custom" aria-selected="true">Custom element</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" id="fight-tab" data-toggle="tab" href="#fight" role="tab" aria-controls="fight" aria-selected="false">Fight</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" id="accomplishment-tab" data-toggle="tab" href="#accomplishment" role="tab" aria-controls="accomplishment" aria-selected="false">Accomplishment</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" id="hazard-tab" data-toggle="tab" href="#hazard" role="tab" aria-controls="hazard" aria-selected="false">Hazard</a>
-                                    </li>
-                                </ul>
-
-                                <div class="tab-content" id="elementTabContent">
-                                    <div class="tab-pane fade show active" id="custom" role="tabpanel" aria-labelledby="custom-tab">
-                                        <div class="form-group">
-                                            <label for="elementCustomXp" class="col-form-label">Custom XP amount:</label>
-                                            <input type="number" class="form-control" id="elementCustomXp" name="elementCustomXp">
-                                        </div>
+                <div class="modal fade" id="setElementModal" tabindex="-1" role="dialog" aria-labelledby="setElementModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="setElementModalLabel">Add an encounter element</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="setElementModalForm" action="javascript:confirmElementData">
+                                    <div class="form-group">
+                                        <label for="elementName" class="col-form-label">Encounter element name:</label>
+                                        <input type="text" class="form-control" id="elementName" name="elementName">
                                     </div>
 
-                                    <div class="tab-pane fade" id="fight" role="tabpanel" aria-labelledby="fight-tab">
-                                        <div class="form-group row">
-                                            <label for="fightExpectedPlayerLevel" class="col-form-label col-sm-4">Expected player level:</label>
-                                            <input type="number" id="fightExpectedPlayerLevel" class="col-sm-6" min="1" max="20">
-                                        </div>
+                                    <ul class="nav nav-tabs" id="elementTab" role="tablist">
+                                        <li class="nav-item">
+                                            <a class="nav-link active" id="custom-tab" data-toggle="tab" href="#custom" role="tab" aria-controls="custom" aria-selected="true">Custom element</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" id="fight-tab" data-toggle="tab" href="#fight" role="tab" aria-controls="fight" aria-selected="false">Fight</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" id="accomplishment-tab" data-toggle="tab" href="#accomplishment" role="tab" aria-controls="accomplishment" aria-selected="false">Accomplishment</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" id="hazard-tab" data-toggle="tab" href="#hazard" role="tab" aria-controls="hazard" aria-selected="false">Hazard</a>
+                                        </li>
+                                    </ul>
 
-                                        <div class="form-group row">
-                                            <label for="fightPlayerExpectedAmount" class="col-form-label col-sm-4">Expected amount of players:</label>
-                                            <input type="number" id="fightPlayerExpectedAmount" class="col-sm-6" min="1">
-                                        </div>
-
-                                        <div class="form-group row">
-                                            <label class="col-sm-4 col-form-label">Experience per player: </label>
-                                            <label class="col-sm-6 col-form-label"><strong id="fightXpLabel">?xp</strong></label>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label class="fight-rating-label">Encounter rating:</label>
-                                            <div class="btn-group" data-toggle="button" id="fightRatingSelector">
-                                                <button class="btn btn-outline-success" id="label-trivial"> Trivial </button>
-                                                <button class="btn btn-outline-info" id="label-low"> Low </button>
-                                                <button class="btn btn-outline-primary" id="label-moderate"> Moderate </button>
-                                                <button class="btn btn-outline-warning" id="label-severe"> Severe </button>
-                                                <button class="btn btn-outline-danger" id="label-extreme"> Extreme </button>
-                                                <button class="btn btn-outline-dark" id="label-impossible"> Impossible </button>
+                                    <div class="tab-content" id="elementTabContent">
+                                        <div class="tab-pane fade show active" id="custom" role="tabpanel" aria-labelledby="custom-tab">
+                                            <div class="form-group">
+                                                <label for="elementCustomXp" class="col-form-label">Custom XP amount:</label>
+                                                <input type="number" class="form-control" id="elementCustomXp" name="elementCustomXp">
                                             </div>
                                         </div>
 
-                                        <div class="accordion" id="elementCreatureAccordion"></div>
+                                        <div class="tab-pane fade" id="fight" role="tabpanel" aria-labelledby="fight-tab">
+                                            <div class="form-group row">
+                                                <label for="fightExpectedPlayerLevel" class="col-form-label col-sm-4">Expected player level:</label>
+                                                <input type="number" id="fightExpectedPlayerLevel" class="col-sm-6" min="1" max="20">
+                                            </div>
 
-                                        <button class="btn btn-outline-primary btn-top-margin" id="fightAddCreature">
-                                            Add more creatures
-                                        </button>
-                                    </div>
+                                            <div class="form-group row">
+                                                <label for="fightPlayerExpectedAmount" class="col-form-label col-sm-4">Expected amount of players:</label>
+                                                <input type="number" id="fightPlayerExpectedAmount" class="col-sm-6" min="1">
+                                            </div>
 
-                                    <div class="tab-pane fade" id="accomplishment" role="tabpanel" aria-labelledby="accomplishment-tab">
-                                        <label for="elementAccomplishmentLevel" class="col-form-label">Accomplishment level:</label>
-                                        <select id="elementAccomplishmentLevel" name="elementAccomplishmentLevel">
-                                            <option value="Minor accomplishment">Minor accomplishment</option>
-                                            <option value="Moderate accomplishment">Moderate accomplishment</option>
-                                            <option value="Major accomplishment">Major accomplishment</option>
-                                        </select>
-                                    </div>
+                                            <div class="form-group row">
+                                                <label class="col-sm-4 col-form-label">Experience per player: </label>
+                                                <label class="col-sm-6 col-form-label"><strong id="fightXpLabel">?xp</strong></label>
+                                            </div>
 
-                                    <div class="tab-pane fade" id="hazard" role="tabpanel" aria-labelledby="hazard-tab">
-                                        <div class="form-group row">
-                                            <label for="hazardExpectedPlayerLevel" class="col-form-label col-sm-4">Expected player level:</label>
-                                            <input type="number" id="hazardExpectedPlayerLevel" class="col-sm-6" min="1" max="20">
+                                            <div class="form-group">
+                                                <label class="fight-rating-label">Encounter rating:</label>
+                                                <div class="btn-group" data-toggle="button" id="fightRatingSelector">
+                                                    <button class="btn btn-outline-success" id="label-trivial"> Trivial </button>
+                                                    <button class="btn btn-outline-info" id="label-low"> Low </button>
+                                                    <button class="btn btn-outline-primary" id="label-moderate"> Moderate </button>
+                                                    <button class="btn btn-outline-warning" id="label-severe"> Severe </button>
+                                                    <button class="btn btn-outline-danger" id="label-extreme"> Extreme </button>
+                                                    <button class="btn btn-outline-dark" id="label-impossible"> Impossible </button>
+                                                </div>
+                                            </div>
+
+                                            <div class="accordion" id="elementCreatureAccordion"></div>
+
+                                            <button class="btn btn-outline-primary btn-top-margin" id="fightAddCreature">
+                                                Add more creatures
+                                            </button>
                                         </div>
 
-                                        <div class="form-group row">
-                                            <label class="col-sm-4 col-form-label">Experience per player: </label>
-                                            <label class="col-sm-6 col-form-label"><strong id="hazardXpLabel">?xp</strong></label>
+                                        <div class="tab-pane fade" id="accomplishment" role="tabpanel" aria-labelledby="accomplishment-tab">
+                                            <label for="elementAccomplishmentLevel" class="col-form-label">Accomplishment level:</label>
+                                            <select id="elementAccomplishmentLevel" name="elementAccomplishmentLevel">
+                                                <option value="Minor accomplishment">Minor accomplishment</option>
+                                                <option value="Moderate accomplishment">Moderate accomplishment</option>
+                                                <option value="Major accomplishment">Major accomplishment</option>
+                                            </select>
                                         </div>
 
-                                        <div class="accordion" id="elementHazardAccordion"></div>
+                                        <div class="tab-pane fade" id="hazard" role="tabpanel" aria-labelledby="hazard-tab">
+                                            <div class="form-group row">
+                                                <label for="hazardExpectedPlayerLevel" class="col-form-label col-sm-4">Expected player level:</label>
+                                                <input type="number" id="hazardExpectedPlayerLevel" class="col-sm-6" min="1" max="20">
+                                            </div>
 
-                                        <button class="btn btn-outline-primary btn-top-margin" id="hazardAddHazard">
-                                            Add more hazards
-                                        </button>
+                                            <div class="form-group row">
+                                                <label class="col-sm-4 col-form-label">Experience per player: </label>
+                                                <label class="col-sm-6 col-form-label"><strong id="hazardXpLabel">?xp</strong></label>
+                                            </div>
+
+                                            <div class="accordion" id="elementHazardAccordion"></div>
+
+                                            <button class="btn btn-outline-primary btn-top-margin" id="hazardAddHazard">
+                                                Add more hazards
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>
-                            </form>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary" id="setElementModalConfirm" onclick="confirmElementData()">
-                                Add element
-                            </button>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" id="setElementModalConfirm" onclick="confirmElementData()">
+                                    Add element
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="tab-pane fade" id="history" role="tabpanel" aria-labelledby="history-tab">
-            Encounter history
-        </div>
+            <div class="tab-pane fade show active" id="history" role="tabpanel" aria-labelledby="history-tab">
+                <div id="history-content">
+                    <div id="history-source" class="card card-body">
+                        <div class="accordion" id="encountersSourceAccordion"></div>
+                    </div>
 
-        <div class="tab-pane fade" id="settings" role="tabpanel" aria-labelledby="settings-tab">
-            <h2>Session settings</h2>
+                    <div id="history-timeline">
+                        <div id="timeline-container">
+                            <div class="list-group" id="timeline" role="tablist"></div>
+                        </div>
 
-            <div class="form-group form-check" style="padding: 0 2em">
-                <input type="checkbox" id="params-autoLevelUp" class="form-check-input">
-                <label for="params-autoLevelUp" class="form-check-label">Automatic level up</label>
-            </div>
+                        <div id="timeline-delete-zone-container">
+                            <div id="timeline-delete-zone"></div>
+                            <h2 id="timeline-delete-zone-background" class="background"></h2>
+                        </div>
+                    </div>
+                </div>
 
-            <p class="btn btn-outline-primary" type="button" data-toggle="collapse" data-target="#playerCollapse" aria-expanded="false" aria-controls="playerCollapse">
-                List of players
-            </p>
+                <div id="history-control">
 
-            <div class="collapse" id="playerCollapse">
-                <div class="card card-body">
-                    <div class="list-group" id="playersList"></div>
-
-                    <button class="btn btn-outline-primary" onclick="showPlayerModal(true)">Add new player</button>
                 </div>
             </div>
 
-            <div class="modal fade" id="setPlayerModal" tabindex="-1" role="dialog" aria-labelledby="setPlayerModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="setPlayerModalLabel">Add a new player to the session</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <form id="setPlayerForm" action="javascript:confirmPlayer()">
-                                <div class="form-group">
-                                    <label for="playerName" class="col-form-label">Player name:</label>
-                                    <input type="text" class="form-control" id="playerName" name="playerName">
-                                </div>
-                                <div class="form-group">
-                                    <label for="playerLevel" class="col-form-label">Player starting level:</label>
-                                    <input type="number" class="form-control" id="playerLevel" name="playerLevel" min="1" max="20">
-                                </div>
-                                <div class="form-group">
-                                    <label for="playerXp" class="col-form-label">Player starting xp:</label>
-                                    <input type="number" class="form-control" id="playerXp" name="playerXp" min="0">
-                                </div>
-                            </form>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary" id="setPlayerModalConfirm" onclick="document.forms['setPlayerForm'].submit()">
-                                Add player
-                            </button>
+            <div class="tab-pane fade" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+                <h2>Session settings</h2>
+
+                <div class="form-group form-check" style="padding: 0 2em">
+                    <input type="checkbox" id="params-autoLevelUp" class="form-check-input">
+                    <label for="params-autoLevelUp" class="form-check-label">Automatic level up</label>
+                </div>
+
+                <p class="btn btn-outline-primary" type="button" data-toggle="collapse" data-target="#playerCollapse" aria-expanded="false" aria-controls="playerCollapse">
+                    List of players
+                </p>
+
+                <div class="collapse" id="playerCollapse">
+                    <div class="card card-body">
+                        <div class="list-group" id="playersList"></div>
+
+                        <button class="btn btn-outline-primary" onclick="showPlayerModal(true)">Add new player</button>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="setPlayerModal" tabindex="-1" role="dialog" aria-labelledby="setPlayerModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="setPlayerModalLabel">Add a new player to the session</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="setPlayerForm" action="javascript:confirmPlayer()">
+                                    <div class="form-group">
+                                        <label for="playerName" class="col-form-label">Player name:</label>
+                                        <input type="text" class="form-control" id="playerName" name="playerName">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="playerLevel" class="col-form-label">Player starting level:</label>
+                                        <input type="number" class="form-control" id="playerLevel" name="playerLevel" min="1" max="20">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="playerXp" class="col-form-label">Player starting xp:</label>
+                                        <input type="number" class="form-control" id="playerXp" name="playerXp" min="0">
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" id="setPlayerModalConfirm" onclick="document.forms['setPlayerForm'].submit()">
+                                    Add player
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -920,6 +941,123 @@
         }
 
 
+        function setSourceEncounters()
+        {
+            let accordion = $('#encountersSourceAccordion')
+            accordion.empty()
+
+            for (let encounter of session.encounters) {
+                let collapseId = `${encounter.id}-source-card-collapse`
+                accordion.append(
+                    $("<div></div>")
+                        .addClass('card')
+                        .prop('id', `${encounter.id}-source-card`)
+                        .append(
+                            $("<div></div>")
+                                .addClass('card-header')
+                                .prop('id', `${encounter.id}-source-card-header`)
+                                .append(
+                                    $("<h2></h2>")
+                                        .addClass("mb-0 accordion-card-header")
+                                        .append(
+                                            $('<a></a>')
+                                                .addClass('btn collapsed text-left largest-button')
+                                                .attr('id', `${encounter.id}-source-card-header-text`)
+                                                .attr('type', 'button')
+                                                .attr('data-toggle', 'collapse')
+                                                .attr('data-target', `#${collapseId}`)
+                                                .attr('aria-expanded', 'false')
+                                                .attr('aria-controls', collapseId)
+                                                .text(encounter.name)
+                                        )
+                                ),
+                            $(`<div aria-labelledby='${encounter.id}-source-card-header' data-parent="#encountersSourceAccordion"></div>`)
+                                .addClass('collapse')
+                                .prop('id', collapseId)
+                                .append(
+                                    $('<div></div>')
+                                        .addClass('list-group')
+                                        .prop('id', `${encounter.id}-source-element-list`)
+                                )
+                        )
+                )
+
+                Sortable.create(document.getElementById(`${encounter.id}-source-element-list`), {
+                    group: {
+                        name: 'history-shared',
+                        pull: 'clone',
+                        put: false
+                    },
+                    animation: 150,
+                    sort: false,
+                })
+
+                for (let element of encounter.elements) {
+                    $(`#${encounter.id}-source-element-list`).append(
+                        $('<a></a>')
+                            .addClass('list-group-item')
+                            .prop('id', `${element.id}-source-item`)
+                            .html(getElementText(element))
+                    )
+                }
+            }
+        }
+
+
+        function setShowTimelinePlaceholder(show = true)
+        {
+            if (!show) {
+                $('#timeline-placeholder').remove()
+            } else {
+                $('#timeline-container').append(
+                    $('<h2></h2>')
+                        .addClass('background')
+                        .prop('id', 'timeline-placeholder')
+                        .append($('<h2></h2>').text("Drag an encounter here"))
+                )
+            }
+        }
+
+
+        function addTimelineEvent(addEvent)
+        {
+            let togglePlaceholder = session.timelineEvents.length === 0
+            if (togglePlaceholder) {
+                setShowTimelinePlaceholder(false)
+                addEvent.newIndex = 0
+            }
+
+            let event = session.addTimelineEvent(addEvent.newIndex, addEvent.item.id.replace('-source-item', ''))
+
+            $(addEvent.item)
+                .after(makeTimelineDiv(event))
+                .remove()
+        }
+
+
+        function makeTimelineDiv(event)
+        {
+            let text = event.levelUp ? "LEVEL UP!" : (event.element != null ? getElementText(event.element) : "Error loading timeline event data")
+
+            return $('<a class="list-group-item"></a>')
+                .prop("id", `${event.id}-item`)
+                .html(text)
+        }
+
+
+        function deleteEvent(addEvent)
+        {
+            let id = addEvent.item.id.replace('-item', '')
+            let index = session.timelineEvents.findIndex(e => e.id === id)
+            if (index != null) {
+                session.timelineEvents.splice(index, 1)
+                session.saveSession()
+            }
+
+            $(addEvent.item).remove()
+        }
+
+
         function addPlayer(player)
         {
             let list = $('#playersList')
@@ -1067,6 +1205,31 @@
             $(`#${hazard.id}-collapser`).dropdown('show')
         })
 
+
+        $('#history-tab').on("show.bs.tab", setSourceEncounters)
+
+        Sortable.create(document.getElementById('timeline'), {
+            group: 'history-shared',
+            animation: 150,
+            onAdd: addTimelineEvent,
+            onEnd: e => {
+                session.timelineEvents.splice(e.newIndex, 0, ...session.timelineEvents.splice(e.oldIndex, 1))
+                session.saveSession()
+            }
+        })
+
+        Sortable.create(document.getElementById('timeline-delete-zone'), {
+            group: 'history-shared',
+            onAdd: deleteEvent
+        })
+
+        setShowTimelinePlaceholder(session.timelineEvents.length === 0)
+
+        for (let event of session.timelineEvents) {
+            $('#timeline').append(makeTimelineDiv(event))
+        }
+
+        $('#timeline-delete-zone-background').append($('<h2>Drag here to delete element</h2>'))
 
         $('#params-autoLevelUp')
             .prop('checked', session.params.autoLevelUp)

@@ -399,7 +399,7 @@
         registerToSession(session)
         {
             do {
-                this.id = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
+                this.id = "element-"  + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
             } while (session.isIdUsed(this.id))
         }
 
@@ -694,8 +694,11 @@
         }
 
 
-        addTimelineEvent(index, element, levelUp = false)
+        addTimelineEvent(index, elementId, levelUp = false)
         {
+            let element = this.findElementById(elementId);
+            if (element == null) return null
+
             let id, found;
             do {
                 id = 'event-' + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
@@ -704,6 +707,9 @@
 
             let event = new TimelineEvent(id, this.params.players.map(p => p.id), element, levelUp);
             this.timelineEvents.splice(index, 0, event);
+
+            session.saveSession()
+
             return event
         }
 
@@ -717,8 +723,10 @@
                 result.encounters.push(Encounter.importFromJSON(e));
             }
 
-            for (let e of object.timelineEvents) {
-                result.timelineEvents.push(TimelineEvent.importFromJSON(e, result));
+            if (object.timelineEvents != null) {
+                for (let e of object.timelineEvents) {
+                    result.timelineEvents.push(TimelineEvent.importFromJSON(e, result));
+                }
             }
 
             return result

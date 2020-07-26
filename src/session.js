@@ -169,8 +169,11 @@ export class Session
     }
 
 
-    addTimelineEvent(index, element, levelUp = false)
+    addTimelineEvent(index, elementId, levelUp = false)
     {
+        let element = this.findElementById(elementId)
+        if (element == null) return null
+
         let id, found;
         do {
             id = 'event-' + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
@@ -192,8 +195,10 @@ export class Session
             result.encounters.push(Encounter.importFromJSON(e))
         }
 
-        for (let e of object.timelineEvents) {
-            result.timelineEvents.push(TimelineEvent.importFromJSON(e, result))
+        if (object.timelineEvents != null) {
+            for (let e of object.timelineEvents) {
+                result.timelineEvents.push(TimelineEvent.importFromJSON(e, result))
+            }
         }
 
         return result
