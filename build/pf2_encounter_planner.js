@@ -526,6 +526,145 @@
     }
 
     /**
+     * @file timeline.js
+     * @author Max Godefroy <max@godefroy.net>
+     */
+
+
+    class Timeline
+    {
+        constructor(session, events = [])
+        {
+            this.events = events == null ? [] : events;
+            this.session = session;
+
+            if (events.length > 0)
+                this.computeTimeline();
+        }
+
+
+        deleteEvent(eventId)
+        {
+            let index = this.events.findIndex(e => e.id === eventId);
+            if (index != null) {
+                this.events.splice(index, 1);
+                this.session.saveSession();
+                this.computeTimeline();
+            }
+        }
+
+
+        moveEvent(oldIndex, newIndex)
+        {
+            this.events.splice(newIndex, 0, ...this.events.splice(oldIndex, 1));
+            this.session.saveSession();
+            this.computeTimeline();
+        }
+
+
+        computeTimeline()
+        {
+            this.playerHistory = {};
+            this.errorEvents = [];
+            this.xpChange = [];
+
+            for (let player of this.session.params.players)
+                this.playerHistory[player.id] = [{
+                    index: -1,
+                    level: parseInt(player.level),
+                    xp: parseInt(player.xp),
+                }];
+
+            let index = 0;
+            for (let event of this.events)
+            {
+                if (event.levelUp) {
+                    let leveledUp = false;
+                    for (let player of event.players) {
+                        let history = this.playerHistory[player.id];
+                        if (history && history.last().xp >= 1000) {
+                            history.push({
+                                index: index,
+                                level: history.last().level + 1,
+                                xp: history.last().xp - 1000,
+                            });
+                            leveledUp = true;
+                        }
+                    }
+
+                    if (!leveledUp)
+                        this.errorEvents.push(event);
+
+                    this.xpChange.push(null);
+                } else {
+                    if (event.element != null && event.element.component != null) {
+                        let component = event.element.component;
+
+                        let players = [];
+                        for (let player of event.players) {
+                            let history = this.playerHistory[player];
+                            if (history) {
+                                players.push(Object.assign({id: player}, history.last()));
+                            }
+                        }
+
+                        if (players.length) {
+                            let xp;
+                            switch (component.type) {
+                                case ComponentType.FIGHT:
+                                    let level = this.session.getPlayerGroupLevel(players);
+                                    let eP = component.expectedPlayers, eL = component.expectedLevel;
+                                    component.expectedLevel = level; component.expectedPlayers = players.length;
+                                    let rating = component.getEncounterRating();
+                                    if (rating === EncounterRating.IMPOSSIBLE) {
+                                        this.errorEvents.push(event);
+                                        xp = null;
+                                    } else {
+                                        xp = component.getEncounterXpPerPlayer();
+                                    }
+                                    component.expectedLevel = eL; component.expectedPlayers = eP;
+                                    break;
+                                case ComponentType.HAZARD:
+                                    let levelH = this.session.getPlayerGroupLevel(players);
+                                    let expLvl = component.expectedLevel;
+                                    component.expectedLevel = levelH;
+                                    xp = component.getEncounterXpPerPlayer();
+                                    component.expectedLevel = expLvl;
+                                    break;
+                                default:
+                                    xp = component.getEncounterXpPerPlayer();
+                            }
+
+                            this.xpChange.push(xp);
+                            xp = xp || 0;
+
+                            for (let player of players) {
+                                this.playerHistory[player.id].push({
+                                    index: index,
+                                    xp: player.xp + xp,
+                                    level: player.level
+                                });
+                            }
+                        } else {
+                            console.log("No players for event " + event.element.name);
+                            this.errorEvents.push(event);
+                        }
+                    } else {
+                        this.errorEvents.push(event);
+                    }
+                }
+
+                index++;
+            }
+        }
+    }
+
+
+    Array.prototype.last = function() {
+        return this[this.length-1]
+    };
+
+    /**
      * @file session.js
      * @author Max Godefroy <max@godefroy.net>
      */
@@ -533,7 +672,7 @@
 
     class Session
     {
-        constructor(name = "Default", params = {})
+        constructor(name = "Default", params = {}, timeline = null)
         {
             this.name = name;
 
@@ -568,7 +707,7 @@
             }, params);
 
             this.encounters = [];
-            this.timelineEvents = [];
+            this.timeline = timeline;
         }
 
 
@@ -659,7 +798,7 @@
                 object.encounters.push(encounter.exportToJSON());
             }
 
-            for (let event of this.timelineEvents) {
+            for (let event of this.timeline.events) {
                 object.timelineEvents.push(event.exportToJSON());
             }
 
@@ -684,8 +823,10 @@
         }
 
 
-        getPlayerGroupLevel() {
-            return Math.min(...this.params.players.map(p => Math.floor(p.xp / 1000) + 1))
+        getPlayerGroupLevel(players = null)
+        {
+            players = players == null ? this.params.players : players;
+            return Math.min(...players.map(p => p.level))
         }
 
 
@@ -707,9 +848,6 @@
 
             let event = new TimelineEvent(id, this.params.players.map(p => p.id), element, levelUp);
             this.timelineEvents.splice(index, 0, event);
-
-            session.saveSession()
-
             return event
         }
 
@@ -723,11 +861,13 @@
                 result.encounters.push(Encounter.importFromJSON(e));
             }
 
+            let events = [];
             if (object.timelineEvents != null) {
                 for (let e of object.timelineEvents) {
-                    result.timelineEvents.push(TimelineEvent.importFromJSON(e, result));
+                    events.push(TimelineEvent.importFromJSON(e, result));
                 }
             }
+            result.timeline = new Timeline(result, events);
 
             return result
         }

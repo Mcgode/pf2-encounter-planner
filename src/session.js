@@ -4,11 +4,12 @@
  */
 import {Encounter} from "./encounter";
 import {TimelineEvent} from "./timeline_event";
+import {Timeline} from "./timeline";
 
 
 export class Session
 {
-    constructor(name = "Default", params = {})
+    constructor(name = "Default", params = {}, timeline = null)
     {
         this.name = name
 
@@ -43,7 +44,7 @@ export class Session
         }, params)
 
         this.encounters = []
-        this.timelineEvents = []
+        this.timeline = timeline
     }
 
 
@@ -134,7 +135,7 @@ export class Session
             object.encounters.push(encounter.exportToJSON())
         }
 
-        for (let event of this.timelineEvents) {
+        for (let event of this.timeline.events) {
             object.timelineEvents.push(event.exportToJSON())
         }
 
@@ -159,8 +160,10 @@ export class Session
     }
 
 
-    getPlayerGroupLevel() {
-        return Math.min(...this.params.players.map(p => Math.floor(p.xp / 1000) + 1))
+    getPlayerGroupLevel(players = null)
+    {
+        players = players == null ? this.params.players : players
+        return Math.min(...players.map(p => p.level))
     }
 
 
@@ -195,11 +198,13 @@ export class Session
             result.encounters.push(Encounter.importFromJSON(e))
         }
 
+        let events = []
         if (object.timelineEvents != null) {
             for (let e of object.timelineEvents) {
-                result.timelineEvents.push(TimelineEvent.importFromJSON(e, result))
+                events.push(TimelineEvent.importFromJSON(e, result))
             }
         }
+        result.timeline = new Timeline(result, events)
 
         return result
     }
