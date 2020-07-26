@@ -541,12 +541,13 @@
 
     class TimelineEvent
     {
-        constructor(id, players, element = null, levelUp = false)
+        constructor(id, players, element = null, levelUp = false, additionalNPCs = 0)
         {
             this.id = id;
             this.players = players;
             this.element = element;
             this.levelUp = levelUp || false;
+            this.additionalNPCs = isNaN(additionalNPCs) ? 0 : parseInt(additionalNPCs);
         }
 
 
@@ -556,14 +557,15 @@
                 id: this.id,
                 players: this.players,
                 element: this.element == null ? null : this.element.id,
-                levelUp: this.levelUp
+                levelUp: this.levelUp,
+                additionalNPCs: this.additionalNPCs
             }
         }
 
 
         static importFromJSON(data, session)
         {
-            return new TimelineEvent(data.id, data.players, session.findElementById(data.element), data.levelUp)
+            return new TimelineEvent(data.id, data.players, session.findElementById(data.element), data.levelUp, data.additionalNPCs)
         }
     }
 
@@ -682,7 +684,7 @@
                                 case ComponentType.FIGHT:
                                     let level = this.session.getPlayerGroupLevel(players);
                                     let eP = component.expectedPlayers, eL = component.expectedLevel;
-                                    component.expectedLevel = level; component.expectedPlayers = players.length;
+                                    component.expectedLevel = level; component.expectedPlayers = players.length + event.additionalNPCs;
                                     let rating = component.getEncounterRating();
                                     if (rating === EncounterRating.IMPOSSIBLE) {
                                         this.errorEvents.push({event: event, reason: "Impossible encounter"});

@@ -116,7 +116,7 @@ export class Timeline
                             case ComponentType.FIGHT:
                                 let level = this.session.getPlayerGroupLevel(players)
                                 let eP = component.expectedPlayers, eL = component.expectedLevel
-                                component.expectedLevel = level; component.expectedPlayers = players.length
+                                component.expectedLevel = level; component.expectedPlayers = players.length + event.additionalNPCs
                                 let rating = component.getEncounterRating()
                                 if (rating === EncounterRating.IMPOSSIBLE) {
                                     this.errorEvents.push({event: event, reason: "Impossible encounter"})
