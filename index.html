@@ -1140,6 +1140,9 @@
             let id = addEvent.item.id.replace('-item', '')
             session.timeline.deleteEvent(id)
 
+            if (selectedEvent != null && selectedEvent.id === id)
+                selectedEvent = null
+
             $(addEvent.item)
                 .tooltip('dispose')
                 .remove()
