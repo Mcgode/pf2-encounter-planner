@@ -208,7 +208,13 @@
                 <div class=" d-flex flex-column h-100">
                     <div class="row flex-fill overflow-auto btn-top-margin">
                         <div class="col">
-                            <div class="accordion" id="encountersSourceAccordion"></div>
+                            <div id="levelUpList" class="list-group">
+                                <div class="list-group-item list-group-item-success text-center font-weight-bold" id="levelUpItem">
+                                    LEVEL UP!
+                                </div>
+                            </div>
+
+                            <div class="accordion btn-top-margin" id="encountersSourceAccordion"></div>
                         </div>
 
                         <div id="history-timeline" class="col d-flex flex-column">
@@ -1070,7 +1076,12 @@
                 addEvent.newIndex = 0
             }
 
-            let event = session.timeline.addEvent(addEvent.newIndex, addEvent.item.id.replace('-source-item', ''))
+            let event;
+
+            if (addEvent.item.id === 'levelUpItem')
+                event = session.timeline.addEvent(addEvent.newIndex, null, true)
+            else
+                event = session.timeline.addEvent(addEvent.newIndex, addEvent.item.id.replace('-source-item', ''))
 
             $(addEvent.item)
                 .after(makeTimelineDiv(event))
@@ -1090,26 +1101,37 @@
                 tooltip = event.element.component.getTooltip()
             tooltip = tooltip || ""
 
-            return $('<a></a>')
-                .addClass('mb-0 accordion-card-header list-group-item list-group-item-action')
+            let item = $('<div></div>')
+                .addClass('list-group-item list-group-item-action')
                 .prop("id", `${event.id}-item`)
                 .attr('data-original-title', tooltip)
                 .attr('data-html', true)
                 .data('title', tooltip)
                 .attr("data-toggle", "tooltip")
                 .tooltip()
-                .append(
-                    $('<a></a>')
-                        .addClass('text-left largest-button')
-                        .html(text),
-                    $('<a></a>')
-                        .addClass('')
-                        .text(xpChange != null ? `${xpChange} xp` : "")
-                )
                 .click(_ => {
                      selectEvent(selectedEvent != null && selectedEvent.id  === event.id ? null : event)
                     refreshPlayerStatus()
                 })
+
+            if (event.levelUp) {
+                item
+                    .addClass('list-group-item-success text-center')
+                    .text(text)
+            } else {
+                item
+                    .addClass('mb-0 accordion-card-header')
+                    .append(
+                        $('<a></a>')
+                            .addClass('text-left largest-button')
+                            .html(text),
+                        $('<a></a>')
+                            .addClass('')
+                            .text(xpChange != null ? `${xpChange} xp` : "")
+                    )
+            }
+
+            return item
         }
 
 
@@ -1141,7 +1163,7 @@
         function showEventsWithErrors()
         {
             $('#timeline')
-                .find('a')
+                .find('div')
                 .removeClass('list-group-item-danger')
                 .each(function() {
                     $(this).attr('data-original-title', $(this).data('title'))
@@ -1341,6 +1363,15 @@
 
         $('#history-tab').on("show.bs.tab", refreshEncountersHistoryPage())
             .tab('show')
+
+        Sortable.create(document.getElementById('levelUpList'), {
+            group: {
+                name: 'history-shared',
+                pull: 'clone',
+                put: false,
+            },
+            sort: false
+        })
 
         Sortable.create(document.getElementById('timeline'), {
             group: 'history-shared',
