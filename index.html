@@ -224,7 +224,7 @@
                     </div>
 
                     <div id="history-control" class="border-top">
-                        <div id="playersStatus" class="list-group"></div>
+                        <div id="playersStatus" class="list-group col-sm-4"></div>
                     </div>
                 </div>
             </div>
@@ -944,6 +944,46 @@
         }
 
 
+        function refreshEncountersHistoryPage()
+        {
+            setSourceEncounters()
+
+            let playerStatus = $("#playersStatus").empty()
+            for (let player of session.params.players) {
+                playerStatus.append(
+                    $('<div></div>')
+                        .addClass('list-group-item d-flex p-sm-2 align-items-center')
+                        .prop('id', `${player.id}-status-item`)
+                        .append(
+                            $('<a></a>')
+                                .addClass('font-weight-bold')
+                                .prop('id', `${player.id}-status-level`),
+                            $('<a></a>')
+                                .addClass('flex-fill')
+                                .text(player.name),
+                            $('<a></a>')
+                                .addClass('')
+                                .prop('id', `${player.id}-status-xp`),
+                            $('<div></div>')
+                                .addClass('progress')
+                                .prop('id', `${player.id}-status-progress`)
+                                .append(
+                                    $('<div></div>')
+                                        .addClass('progress-bar')
+                                        .attr('role', 'progressbar')
+                                        .attr('aria-valuenow', '0')
+                                        .attr('aria-valuemin', '0')
+                                        .attr('aria-valuemax', '1000')
+                                )
+                        )
+
+                )
+            }
+
+            refreshPlayerStatus()
+        }
+
+
         function setSourceEncounters()
         {
             let accordion = $('#encountersSourceAccordion')
@@ -1068,6 +1108,7 @@
                 )
                 .click(_ => {
                      selectEvent(selectedEvent != null && selectedEvent.id  === event.id ? null : event)
+                    refreshPlayerStatus()
                 })
         }
 
@@ -1080,6 +1121,9 @@
             $(addEvent.item)
                 .tooltip('dispose')
                 .remove()
+
+            if (session.timeline.events.length === 0)
+                setShowTimelinePlaceholder()
         }
 
 
@@ -1107,6 +1151,33 @@
                 $(`#${eventError.event.id}-item`)
                     .addClass('list-group-item-danger')
                     .attr('data-original-title', eventError.reason)
+            }
+        }
+
+
+        function refreshPlayerStatus()
+        {
+            let index = selectedEvent != null ? session.timeline.events.findIndex(e => e.id === selectedEvent.id) : null
+
+            let startColor = [0, 100, 0]
+            let endColor = [0, 200, 0]
+
+            for (let player of session.params.players) {
+                let history = index == null ?
+                    session.timeline.playerHistory[player.id].last() :
+                    session.timeline.playerHistory[player.id].filter(h => h.index <= index).last()
+
+                $(`#${player.id}-status-level`).text(`[Lvl ${history.level}]`)
+                $(`#${player.id}-status-xp`).text(`${history.xp} xp`)
+
+                let progress = Math.min(history.xp, 1000)
+                let p = progress / 1000, q = 1 - p;
+                let color = [...Array(3).keys()].map(i => { return startColor[i] * q + endColor[i] * p })
+
+                $(`#${player.id}-status-progress .progress-bar`)
+                    .attr('aria-valuenow', progress)
+                    .css('width', `${progress / 10}%`)
+                    .css('background-color', `rgb(${color.toString()})`)
             }
         }
 
@@ -1268,7 +1339,7 @@
         })
 
 
-        $('#history-tab').on("show.bs.tab", setSourceEncounters)
+        $('#history-tab').on("show.bs.tab", refreshEncountersHistoryPage())
             .tab('show')
 
         Sortable.create(document.getElementById('timeline'), {

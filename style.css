@@ -59,56 +59,6 @@ html, body {
     height: 100%;
 }
 
-/*#history {*/
-/*    display: flex;*/
-/*    flex-direction: column;*/
-/*    width: 100%;*/
-/*    height: 100%;*/
-/*    overflow: auto;*/
-/*}*/
-
-/*#history-content {*/
-/*    display: flex;*/
-/*    flex-direction: row;*/
-/*    flex: 1 1 0;*/
-/*}*/
-
-/*#history-control {*/
-/*    height: 5vh;*/
-/*}*/
-
-/*#history-source {*/
-/*    margin: 1em;*/
-/*    width: 50%;*/
-/*    max-width: 50%;*/
-/*}*/
-
-/*#history-timeline {*/
-/*    flex: 1 1 auto;*/
-/*    padding: 0.5em;*/
-/*    display: flex;*/
-/*    flex-direction: column;*/
-/*    max-height: 100%;*/
-/*}*/
-
-/*#timeline-container {*/
-/*    flex: 1 1 0;*/
-/*    margin-bottom: 1em;*/
-/*}*/
-
-/*#timeline {*/
-/*    overflow: auto;*/
-/*}*/
-
-/*#timeline-delete-zone-container {*/
-/*    height: 6em;*/
-/*}*/
-
-/*#timeline-delete-zone {*/
-/*    width: 100%;*/
-/*    height: 100%;*/
-/*}*/
-
 #timeline-placeholder {
     color: #777;
     text-align: center;
@@ -136,4 +86,22 @@ html, body {
 
 .background h2 {
     margin: auto;
+}
+
+#history-control {
+    max-height: 10em;
+    padding-top: 0.5em;
+}
+
+#playersStatus {
+    height: 100%;
+    overflow: auto;
+}
+
+#playersStatus .list-group-item a {
+    margin-right: 0.5em;
+}
+
+#playersStatus .list-group-item .progress {
+    width: 10em;
 }
