@@ -545,8 +545,8 @@
                 }
             }
 
-            if (tmpFightComponent == null) tmpFightComponent = new PF2EncounterPlanner.FightComponent()
-            if (tmpHazardComponent == null) tmpHazardComponent = new PF2EncounterPlanner.HazardComponent()
+            if (tmpFightComponent == null) tmpFightComponent = new PF2EncounterPlanner.FightComponent(session.params.players.length, session.getPlayerGroupLevel())
+            if (tmpHazardComponent == null) tmpHazardComponent = new PF2EncounterPlanner.HazardComponent(session.getPlayerGroupLevel())
         }
 
 
