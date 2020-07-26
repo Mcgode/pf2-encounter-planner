@@ -1391,7 +1391,10 @@
             $('#timeline').append(makeTimelineDiv(event))
         }
 
-        session.timeline.listener = showEventsWithErrors
+        session.timeline.listener = _ => {
+            showEventsWithErrors()
+            refreshPlayerStatus()
+        }
         showEventsWithErrors()
 
         $('#timeline-delete-zone-background').append($('<h2>Drag here to delete element</h2>'))
