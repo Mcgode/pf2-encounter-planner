@@ -232,6 +232,12 @@
                     <div id="history-control" class="border-top row">
                         <div id="playersStatus" class="list-group col-sm-4"></div>
                         <div id="selectedPlayers" class="col-sm-4 overflow-auto flex-column h-100"></div>
+                        <div id="other-controls" class="col overflow-auto h-100">
+                            <div class="form-group">
+                                <label for="additionalNPCsInput" class="col-form-label">Additional NPCs</label>
+                                <input type="number" id="additionalNPCsInput" min="0" class="form-control">
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1145,7 +1151,7 @@
                 .tooltip()
                 .click(_ => {
                      selectEvent(selectedEvent != null && selectedEvent.id  === event.id ? null : event)
-                    refreshHistoryControls()
+                     refreshHistoryControls()
                 })
 
             if (event.levelUp) {
@@ -1252,6 +1258,10 @@
                     .prop('disabled', selectedEvent == null)
                     .prop('checked', selectedEvent != null && selectedEvent.players.find(p => p === player.id) != null)
             }
+
+            $('#additionalNPCsInput')
+                .attr('disabled', selectedEvent == null)
+                .val(selectedEvent == null ? null : selectedEvent.additionalNPCs)
         }
 
 
@@ -1326,6 +1336,7 @@
             }
 
             session.saveSession()
+            session.timeline.computeTimeline()
         }
 
         function onResize(_)
@@ -1447,6 +1458,16 @@
         showEventsWithErrors()
 
         $('#timeline-delete-zone-background').append($('<h2>Drag here to delete element</h2>'))
+
+        $('#additionalNPCsInput')
+            .change(function() {
+                if (selectedEvent != null) {
+                    selectedEvent.additionalNPCs = parseInt($(this).val())
+                    session.saveSession()
+                    session.timeline.computeTimeline()
+
+                }
+            })
 
         $('#params-autoLevelUp')
             .prop('checked', session.params.autoLevelUp)
