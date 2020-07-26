@@ -1015,7 +1015,8 @@
                                             if (index >= 0) selectedEvent.players.splice(index, 1)
                                         }
                                         session.saveSession()
-                                        session.timeline.computeTimeline    ()
+                                        session.timeline.computeTimeline()
+                                        refreshEvent(selectedEvent)
                                     }
                                 }),
                             $('<label></label>')
@@ -1164,14 +1165,42 @@
                     .append(
                         $('<a></a>')
                             .addClass('text-left largest-button')
+                            .prop("id", `${event.id}-item-text`)
                             .html(text),
                         $('<a></a>')
                             .addClass('')
+                            .prop("id", `${event.id}-item-xp`)
                             .text(xpChange != null ? `${xpChange} xp` : "")
                     )
             }
 
             return item
+        }
+
+
+        function refreshEvent(event)
+        {
+            if (event.levelUp || event.element == null) return;
+
+            let text = getElementText(event.element)
+            text = text.replace(/, [?0-9]+ xp/, '')
+
+            let xpChange = session.timeline.xpChange[event.id]
+
+            let tooltip;
+            if (event.element != null && event.element.component != null)
+                tooltip = event.element.component.getTooltip()
+            tooltip = tooltip || ""
+
+            $(`#${event.id}-item`)
+                .attr('data-original-title', tooltip)
+                .data('title', tooltip)
+
+            $(`#${event.id}-item-name`)
+                .html(text)
+
+            $(`#${event.id}-item-xp`)
+                .text(xpChange != null ? `${xpChange} xp` : "")
         }
 
 
@@ -1262,6 +1291,9 @@
             $('#additionalNPCsInput')
                 .attr('disabled', selectedEvent == null)
                 .val(selectedEvent == null ? null : selectedEvent.additionalNPCs)
+
+            for (let event of session.timeline.events)
+                refreshEvent(event)
         }
 
 
@@ -1465,7 +1497,7 @@
                     selectedEvent.additionalNPCs = parseInt($(this).val())
                     session.saveSession()
                     session.timeline.computeTimeline()
-
+                    refreshEvent(selectedEvent)
                 }
             })
 
