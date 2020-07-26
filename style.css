@@ -24,7 +24,7 @@ html, body {
 }
 
 .accordion-card-header {
-    display: flex;
+    display: flex !important;
     flex-direction: row;
     width: available;
 }

@@ -172,23 +172,6 @@ export class Session
     }
 
 
-    addTimelineEvent(index, elementId, levelUp = false)
-    {
-        let element = this.findElementById(elementId)
-        if (element == null) return null
-
-        let id, found;
-        do {
-            id = 'event-' + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
-            found = this.timelineEvents.find(e => e.id === id) != null
-        } while (found)
-
-        let event = new TimelineEvent(id, this.params.players.map(p => p.id), element, levelUp)
-        this.timelineEvents.splice(index, 0, event)
-        return event
-    }
-
-
     static importFromJSON(jsonData) {
         let object = JSON.parse(jsonData)
 

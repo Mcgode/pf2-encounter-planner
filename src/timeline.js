@@ -4,6 +4,7 @@
  */
 import {ComponentType} from "./elements/component_types";
 import {EncounterRating} from "./elements/fight_component";
+import {TimelineEvent} from "./timeline_event";
 
 
 export class Timeline
@@ -15,6 +16,27 @@ export class Timeline
 
         if (events.length > 0)
             this.computeTimeline()
+
+        this.listener = null
+    }
+
+
+    addEvent(index, elementId, levelUp = false)
+    {
+        let element = session.findElementById(elementId)
+        if (element == null) return null
+
+        let id, found;
+        do {
+            id = 'event-' + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
+            found = this.events.find(e => e.id === id) != null
+        } while (found)
+
+        let event = new TimelineEvent(id, session.params.players.map(p => p.id), element, levelUp)
+        this.events.splice(index, 0, event)
+        this.session.saveSession()
+        this.computeTimeline()
+        return event
     }
 
 
@@ -41,7 +63,7 @@ export class Timeline
     {
         this.playerHistory = {}
         this.errorEvents = []
-        this.xpChange = []
+        this.xpChange = {}
 
         for (let player of this.session.params.players)
             this.playerHistory[player.id] = [{
@@ -69,8 +91,6 @@ export class Timeline
 
                 if (!leveledUp)
                     this.errorEvents.push(event)
-
-                this.xpChange.push(null)
             } else {
                 if (event.element != null && event.element.component != null) {
                     let component = event.element.component
@@ -110,7 +130,7 @@ export class Timeline
                                 xp = component.getEncounterXpPerPlayer()
                         }
 
-                        this.xpChange.push(xp)
+                        this.xpChange[event.id] = xp
                         xp = xp || 0
 
                         for (let player of players) {
@@ -130,6 +150,10 @@ export class Timeline
             }
 
             index++
+        }
+
+        if (this.listener != null) {
+            this.listener()
         }
     }
 }

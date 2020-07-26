@@ -1022,27 +1022,38 @@
 
         function addTimelineEvent(addEvent)
         {
-            let togglePlaceholder = session.timelineEvents.length === 0
+            let togglePlaceholder = session.timeline.events.length === 0
             if (togglePlaceholder) {
                 setShowTimelinePlaceholder(false)
                 addEvent.newIndex = 0
             }
 
-            let event = session.addTimelineEvent(addEvent.newIndex, addEvent.item.id.replace('-source-item', ''))
+            let event = session.timeline.addEvent(addEvent.newIndex, addEvent.item.id.replace('-source-item', ''))
 
             $(addEvent.item)
                 .after(makeTimelineDiv(event))
                 .remove()
+            showEventsWithErrors()
         }
 
 
         function makeTimelineDiv(event)
         {
             let text = event.levelUp ? "LEVEL UP!" : (event.element != null ? getElementText(event.element) : "Error loading timeline event data")
+            text = text.replace(/, [?0-9]+ xp/, '')
+            let xpChange = session.timeline.xpChange[event.id]
 
-            return $('<a class="list-group-item list-group-item-action"></a>')
+            return $('<a></a>')
+                .addClass('mb-0 accordion-card-header list-group-item list-group-item-action')
                 .prop("id", `${event.id}-item`)
-                .html(text)
+                .append(
+                    $('<a></a>')
+                        .addClass('text-left largest-button')
+                        .html(text),
+                    $('<a></a>')
+                        .addClass('')
+                        .text(xpChange != null ? `${xpChange} xp` : "")
+                )
                 .click(_ => {
                      selectEvent(selectedEvent != null && selectedEvent.id  === event.id ? null : event)
                 })
@@ -1052,11 +1063,7 @@
         function deleteEvent(addEvent)
         {
             let id = addEvent.item.id.replace('-item', '')
-            let index = session.timelineEvents.findIndex(e => e.id === id)
-            if (index != null) {
-                session.timelineEvents.splice(index, 1)
-                session.saveSession()
-            }
+            session.timeline.deleteEvent(id)
 
             $(addEvent.item).remove()
         }
@@ -1070,6 +1077,19 @@
             selectedEvent = event
             if (event != null)
                 $(`#${event.id}-item`).addClass('active')
+        }
+
+
+        function showEventsWithErrors()
+        {
+            $('#timeline')
+                .find('a')
+                .removeClass('list-group-item-danger')
+
+            for (let event of session.timeline.errorEvents) {
+                $(`#${event.id}-item`)
+                    .addClass('list-group-item-danger')
+            }
         }
 
 
@@ -1227,10 +1247,7 @@
             group: 'history-shared',
             animation: 150,
             onAdd: addTimelineEvent,
-            onEnd: e => {
-                session.timelineEvents.splice(e.newIndex, 0, ...session.timelineEvents.splice(e.oldIndex, 1))
-                session.saveSession()
-            }
+            onEnd: e => session.timeline.moveEvent(e.oldIndex, e.newIndex)
         })
 
         Sortable.create(document.getElementById('timeline-delete-zone'), {
@@ -1238,11 +1255,14 @@
             onAdd: deleteEvent
         })
 
-        setShowTimelinePlaceholder(session.timelineEvents.length === 0)
+        setShowTimelinePlaceholder(session.timeline.events.length === 0)
 
-        for (let event of session.timelineEvents) {
+        for (let event of session.timeline.events) {
             $('#timeline').append(makeTimelineDiv(event))
         }
+
+        session.timeline.listener = showEventsWithErrors
+        showEventsWithErrors()
 
         $('#timeline-delete-zone-background').append($('<h2>Drag here to delete element</h2>'))
 
