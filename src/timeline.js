@@ -111,8 +111,8 @@ export class Timeline
                     }
 
                     if (players.length) {
-                        let maxLevel = Math.max(...players.map(p => p.level))
-                        let maxXp = Math.max(...players.map(p => p.level * 1000 + p.xp))
+                        let maxLevel = Math.max(...Object.values(this.playerHistory).map(p => p.last().level))
+                        let maxXp = Math.min(...Object.values(this.playerHistory).filter(p => p.last().level === maxLevel).map(p => p.last().level * 1000 + p.last().xp))
 
                         let xp;
                         switch (component.type) {
@@ -149,7 +149,7 @@ export class Timeline
                             let additionalXp = player.level < maxLevel ?
                                 xp * Math.max(1, this.session.params.underLeveledPlayerMultiplier) :
                                 xp
-                            additionalXp = Math.min(additionalXp, xp + maxXp - player.level * 1000 - player.xp)
+                            additionalXp = Math.max(xp, Math.min(additionalXp, xp + maxXp - player.level * 1000 - player.xp))
 
                             this.playerHistory[player.id].push({
                                 index: index,
