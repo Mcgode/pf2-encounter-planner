@@ -679,6 +679,9 @@
                         }
 
                         if (players.length) {
+                            let maxLevel = Math.max(...players.map(p => p.level));
+                            let maxXp = Math.max(...players.map(p => p.level * 1000 + p.xp));
+
                             let xp;
                             switch (component.type) {
                                 case ComponentType.FIGHT:
@@ -709,9 +712,16 @@
                             xp = xp || 0;
 
                             for (let player of players) {
+                                if (player.level < maxLevel)
+                                    console.log(player, maxLevel, maxXp);
+                                let additionalXp = player.level < maxLevel ?
+                                    xp * Math.max(1, this.session.params.underLeveledPlayerMultiplier) :
+                                    xp;
+                                additionalXp = Math.min(additionalXp, xp + maxXp - player.level * 1000 - player.xp);
+
                                 this.playerHistory[player.id].push({
                                     index: index,
-                                    xp: player.xp + xp,
+                                    xp: player.xp + additionalXp,
                                     level: player.level
                                 });
                             }
@@ -752,6 +762,7 @@
             this.params = Object.assign({
                 autoLevelUp: false,
                 groupLevelFunction: GroupLevelFunction.MAX_PLAYER_LEVEL,
+                underLeveledPlayerMultiplier: 2.0,
                 players: [
                     {
                         name: "Player 1",

@@ -16,6 +16,7 @@ export class Session
         this.params = Object.assign({
             autoLevelUp: false,
             groupLevelFunction: GroupLevelFunction.MAX_PLAYER_LEVEL,
+            underLeveledPlayerMultiplier: 2.0,
             players: [
                 {
                     name: "Player 1",
