@@ -255,6 +255,11 @@
                     <select id="groupLevelFunction" class="form-control"></select>
                 </div>
 
+                <div class="form-group">
+                    <label for="underLeveledPlayerXpMultiplier" class="col-form-label">Under-leveled player XP multiplier:</label>
+                    <input type="number" min="1" step="0.1" id="underLeveledPlayerXpMultiplier" class="form-control">
+                </div>
+
                 <p class="btn btn-outline-primary" type="button" data-toggle="collapse" data-target="#playerCollapse" aria-expanded="false" aria-controls="playerCollapse">
                     List of players
                 </p>
@@ -339,6 +344,8 @@
         })
 
         let groupLevelFunction = $('#groupLevelFunction')
+
+        let underLeveledPlayerXpMultiplier = $('#underLeveledPlayerXpMultiplier')
 
         $("#custom-tab").on('show.bs.tab', _ => selectedTab = PF2EncounterPlanner.ComponentType.CUSTOM)
         $("#fight-tab").on('show.bs.tab', _ => selectedTab = PF2EncounterPlanner.ComponentType.FIGHT)
@@ -1534,10 +1541,16 @@
 
         $('#settings-tab').on('show.bs.tab', function() {
             groupLevelFunction.val(session.params.groupLevelFunction)
+            underLeveledPlayerXpMultiplier.val(session.params.underLeveledPlayerMultiplier)
         })
 
         groupLevelFunction.change(function() {
             session.params.groupLevelFunction = $(this).val()
+            session.saveSession()
+        })
+
+        underLeveledPlayerXpMultiplier.change(function() {
+            session.params.underLeveledPlayerMultiplier = parseFloat($(this).val())
             session.saveSession()
         })
 
