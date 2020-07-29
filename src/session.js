@@ -15,6 +15,7 @@ export class Session
 
         this.params = Object.assign({
             autoLevelUp: false,
+            groupLevelFunction: GroupLevelFunction.MAX_PLAYER_LEVEL,
             players: [
                 {
                     name: "Player 1",
@@ -163,7 +164,16 @@ export class Session
     getPlayerGroupLevel(players = null)
     {
         players = players == null ? this.params.players : players
-        return Math.min(...players.map(p => p.level))
+        switch (this.params.groupLevelFunction) {
+            case GroupLevelFunction.MIN_PLAYER_LEVEL:
+                return Math.min(...players.map(p => p.level))
+            case GroupLevelFunction.AVERAGE_PLAYER_LEVEL_FLOOR:
+                return Math.floor(players.map(p => p.level).reduce((a, b) => a+b, 0) / players.length)
+            case GroupLevelFunction.AVERAGE_PLAYER_LEVEL_CEIL:
+                return Math.ceil(players.map(p => p.level).reduce((a, b) => a+b, 0) / players.length)
+            default:
+                return Math.max(...players.map(p => p.level))
+        }
     }
 
 
@@ -201,4 +211,12 @@ export class Session
             session.timeline = new Timeline(session)
         return session
     }
+}
+
+
+export const GroupLevelFunction = {
+    MIN_PLAYER_LEVEL: "Minimum player level",
+    MAX_PLAYER_LEVEL: "Maximum player level",
+    AVERAGE_PLAYER_LEVEL_FLOOR: "Average player level (floor)",
+    AVERAGE_PLAYER_LEVEL_CEIL: "Average player level (ceil)"
 }
