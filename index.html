@@ -246,8 +246,13 @@
                 <h2>Session settings</h2>
 
                 <div class="form-group form-check" style="padding: 0 2em">
-                    <input type="checkbox" id="params-autoLevelUp" class="form-check-input">
+                    <input type="checkbox" id="params-autoLevelUp" class="form-check-input" disabled>
                     <label for="params-autoLevelUp" class="form-check-label">Automatic level up</label>
+                </div>
+
+                <div class="form-group">
+                    <label for="groupLevelFunction" class="col-form-label">Group level function:</label>
+                    <select id="groupLevelFunction" class="form-control"></select>
                 </div>
 
                 <p class="btn btn-outline-primary" type="button" data-toggle="collapse" data-target="#playerCollapse" aria-expanded="false" aria-controls="playerCollapse">
@@ -332,6 +337,8 @@
         setElementModal.on('shown.bs.modal', function() {
             $('#setElementModalForm input').first().focus()
         })
+
+        let groupLevelFunction = $('#groupLevelFunction')
 
         $("#custom-tab").on('show.bs.tab', _ => selectedTab = PF2EncounterPlanner.ComponentType.CUSTOM)
         $("#fight-tab").on('show.bs.tab', _ => selectedTab = PF2EncounterPlanner.ComponentType.FIGHT)
@@ -1461,7 +1468,6 @@
 
 
         $('#history-tab').on("show.bs.tab", refreshEncountersHistoryPage)
-            .tab('show')
 
         Sortable.create(document.getElementById('levelUpList'), {
             group: {
@@ -1517,6 +1523,23 @@
 
         for (let player of session.params.players)
             addPlayer(player)
+
+        for (let functionName of Object.values(PF2EncounterPlanner.GroupLevelFunction)) {
+            groupLevelFunction.append(
+                $('<option></option>')
+                    .attr('value', functionName)
+                    .text(functionName)
+            )
+        }
+
+        $('#settings-tab').on('show.bs.tab', function() {
+            groupLevelFunction.val(session.params.groupLevelFunction)
+        })
+
+        groupLevelFunction.change(function() {
+            session.params.groupLevelFunction = $(this).val()
+            session.saveSession()
+        })
 
         window.onresize = onResize
         onResize()

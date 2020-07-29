@@ -965,6 +965,7 @@
      */
 
     exports.Session = Session;
+    exports.GroupLevelFunction = GroupLevelFunction;
     exports.Encounter = Encounter;
     exports.EncounterElement = EncounterElement;
     exports.CustomComponent = CustomComponent;
