@@ -204,39 +204,39 @@
                 </div>
             </div>
 
-            <div class="tab-pane fade container-fluid" id="history" role="tabpanel" aria-labelledby="history-tab" style="height: 90vh">
-                <div class=" d-flex flex-column h-100">
-                    <div class="row flex-fill overflow-auto btn-top-margin">
-                        <div class="col">
-                            <div id="levelUpList" class="list-group">
-                                <div class="list-group-item list-group-item-success text-center font-weight-bold" id="levelUpItem">
-                                    LEVEL UP!
-                                </div>
+            <div class="tab-pane fade container-fluid" id="history" role="tabpanel" aria-labelledby="history-tab">
+                <div id="history-content" class="row h-75 overflow-auto btn-top-margin">
+                    <div class="col h-100 overflow-auto">
+                        <div id="levelUpList" class="list-group">
+                            <div class="list-group-item list-group-item-success text-center font-weight-bold" id="levelUpItem">
+                                LEVEL UP!
                             </div>
-
-                            <div class="accordion btn-top-margin" id="encountersSourceAccordion"></div>
                         </div>
 
-                        <div id="history-timeline" class="col d-flex flex-column">
-                            <div id="timeline-container" class="flex-fill position-relative">
-                                <div class="list-group h-100" id="timeline" role="tablist"></div>
-                            </div>
+                        <div class="accordion btn-top-margin" id="encountersSourceAccordion"></div>
+                    </div>
 
-                            <div id="timeline-delete-zone-container" class="position-relative btn-top-margin">
-                                <div id="timeline-delete-zone" style="height: 6em"></div>
+                    <div id="history-timeline" class="col h-100">
+                        <div id="timeline-container" class="h-75 overflow-auto position-relative">
+                            <div class="list-group h-100" id="timeline" role="tablist"></div>
+                        </div>
+
+                        <div id="timeline-delete-zone-container" class="h-25" style="padding: 1em 0">
+                            <div class="position-relative w-100 h-100">
+                                <div id="timeline-delete-zone" class="h-100"></div>
                                 <h2 id="timeline-delete-zone-background" class="background"></h2>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <div id="history-control" class="border-top row">
-                        <div id="playersStatus" class="list-group col-sm-4"></div>
-                        <div id="selectedPlayers" class="col-sm-4 overflow-auto flex-column h-100"></div>
-                        <div id="other-controls" class="col overflow-auto h-100">
-                            <div class="form-group">
-                                <label for="additionalNPCsInput" class="col-form-label">Additional NPCs</label>
-                                <input type="number" id="additionalNPCsInput" min="0" class="form-control">
-                            </div>
+                <div id="history-control" class="border-top row h-25 overflow-auto">
+                    <div id="playersStatus" class="list-group col-sm-4"></div>
+                    <div id="selectedPlayers" class="col-sm-4 flex-column h-100"></div>
+                    <div id="other-controls" class="col h-100">
+                        <div class="form-group">
+                            <label for="additionalNPCsInput" class="col-form-label">Additional NPCs</label>
+                            <input type="number" id="additionalNPCsInput" min="0" class="form-control">
                         </div>
                     </div>
                 </div>
@@ -1028,6 +1028,8 @@
             }
 
             refreshHistoryControls()
+
+            onResize()
         }
 
 
@@ -1373,10 +1375,14 @@
 
         function onResize(_)
         {
-            let height = $("body div").height()
-            let tabsHeight = $("#mainTab").outerHeight()
+            let bodyHeight = $("body div").height()
+            let navTabHeight = $("#mainTab").outerHeight()
 
-            $('#history').outerHeight(height - tabsHeight, true)
+            let history = $('#history').outerHeight(bodyHeight - navTabHeight, true)
+
+            let controlsHeight = $('#history-control').outerHeight()
+            console.log(history.outerHeight(), history.height(), controlsHeight)
+            // $('#history-content').outerHeight(history.height() - controlsHeight - 20)
         }
 
 
@@ -1455,6 +1461,7 @@
 
 
         $('#history-tab').on("show.bs.tab", refreshEncountersHistoryPage)
+            .tab('show')
 
         Sortable.create(document.getElementById('levelUpList'), {
             group: {

@@ -93,11 +93,6 @@ html, body {
     padding-top: 0.5em;
 }
 
-#playersStatus {
-    height: 100%;
-    overflow: auto;
-}
-
 #playersStatus .list-group-item a {
     margin-right: 0.5em;
 }
