@@ -22,6 +22,16 @@
 
                 <a id="currentSession" class="col">Current session: </a>
 
+                <button class="btn btn-secondary col-md-auto" type="button" onclick="downloadJSON()">
+                    <img src="resources/get_app-24px.svg" alt="Download">
+                    Download JSON
+                </button>
+
+                <button class="btn btn-secondary col-md-auto" type="button" data-toggle="modal" data-target="#uploadJsonModal" style="margin-left: 0.5em">
+                    <img src="resources/publish-24px.svg" alt="Upload">
+                    Upload JSON
+                </button>
+
                 <div class="dropdown-menu" aria-labelledby="session-dropdown">
                     <a class="dropdown-item" id="addSession" data-toggle="modal" data-target="#addSessionModal">
                         <strong class="font-weight-bolder">+</strong>
@@ -97,6 +107,37 @@
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                 <button type="button" class="btn btn-primary" onclick="document.forms['renameSessionForm'].submit()">
                                     Rename
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="uploadJsonModal" tabindex="-1" role="dialog" aria-labelledby="uploadJsonModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="uploadJsonModalLabel">Import a JSON session</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="uploadJsonForm" action="javascript:uploadJson(jsonSessionName.value)">
+                                    <div class="form-group">
+                                        <label for="jsonFile" class="col-form-label">JSON file:</label>
+                                        <input type="file" accept="application/json" class="form-control-file" id="jsonFile" name="jsonFile">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="jsonSessionName" class="col-form-label">Session name:</label>
+                                        <input type="text" class="form-control" id="jsonSessionName" name="jsonSessionName">
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" onclick="document.forms['uploadJsonForm'].submit()">
+                                    Import
                                 </button>
                             </div>
                         </div>
@@ -368,7 +409,7 @@
                     <button class="btn btn-outline-info btn-top-margin" id="renameSession" data-toggle="modal" data-target="#renameSessionModal">
                         Rename session
                     </button>
-                    <button class="btn btn-outline-danger btn-top-margin" id="deleteSession" data-toggle="modal" data-target="#deleteSessionModal">
+                    <button class="btn btn-outline-danger btn-top-margin" id="deleteSession" data-toggle="modal" data-target="#deleteSessionModal" style="margin-left: 1em">
                         Delete session
                     </button>
                 </div>
@@ -428,6 +469,7 @@
 
         let tmpFightComponent = null
         let tmpHazardComponent = null
+        let validatedSession = null
 
         let addEncounterModal = $('#addEncounterModal');
         addEncounterModal.on('shown.bs.modal', function() {
@@ -458,6 +500,12 @@
             })
             .on('show.bs.modal', function() {
                 $('#newSessionName').val(session.name)
+            })
+
+        let uploadJsonModal = $('#uploadJsonModal')
+            .on('show.bs.modal', function() {
+                $('#jsonFile').val(null)
+                $('#jsonSessionName').val(null)
             })
 
         let groupLevelFunction = $('#groupLevelFunction')
@@ -1615,6 +1663,38 @@
         }
 
 
+        function downloadJSON()
+        {
+            let element = document.createElement('a')
+            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(session.exportToJSON()));
+            element.setAttribute('download', session.name + '.json');
+
+            element.style.display = 'none';
+            document.body.appendChild(element);
+
+            element.click();
+
+            document.body.removeChild(element);
+        }
+
+
+        function uploadJson(name)
+        {
+            let sessions = JSON.parse(window.localStorage.getItem('sessions:list'))
+            let index = sessions.findIndex(s => s === name)
+
+            if (index >= 0 || validatedSession == null)
+                return;
+
+            validatedSession.name = name
+            validatedSession.saveSession()
+
+            loadSession(name)
+
+            uploadJsonModal.modal('hide')
+        }
+
+
         function onResize(_)
         {
             let bodyHeight = $("body div").height()
@@ -1782,6 +1862,48 @@
             let nameInList = sessions.findIndex(s => s === $(this).val()) >= 0
 
             if (nameInList && session.name !== $(this).val()) {
+                this.setCustomValidity("Name is already in use")
+            } else {
+                this.setCustomValidity("")
+            }
+        })
+
+        $('#jsonFile').change(function(e) {
+            validatedSession = null
+
+            if (!e.target.files.length) {
+                this.setCustomValidity("No file selected")
+                return;
+            }
+
+            let reader = new FileReader()
+            let err = null
+            try {
+                reader.onload = (event) => {
+                    console.log("File content", event.target.result)
+
+                    try {
+                        validatedSession = PF2EncounterPlanner.Session.importFromJSON(event.target.result)
+                    } catch (e) {
+                        console.warn(e)
+                        err = "Unable to parse session data"
+                    }
+                }
+                reader.readAsText(e.target.files[0])
+            } catch (e) {
+                console.warn(e)
+                this.setCustomValidity("Unable to read the provided file")
+                return;
+            }
+
+            this.setCustomValidity(err || "")
+        })
+
+        $('#jsonSessionName').change(function() {
+            let sessions = JSON.parse(window.localStorage.getItem('sessions:list'))
+            let nameInList = sessions.findIndex(s => s === $(this).val()) >= 0
+
+            if (nameInList) {
                 this.setCustomValidity("Name is already in use")
             } else {
                 this.setCustomValidity("")
