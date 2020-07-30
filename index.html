@@ -1844,7 +1844,7 @@
 
         setUpSessions()
 
-        loadSession(window.localStorage.getItem('sessions:last'))
+        loadSession(window.localStorage.getItem('sessions:last') || "Default")
 
         $('#sessionName').change(function() {
             let sessions = JSON.parse(window.localStorage.getItem('sessions:list')) || []
