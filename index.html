@@ -1557,7 +1557,7 @@
         {
             $(".session-dropdown-item").remove()
 
-            let sessions = JSON.parse(window.localStorage.getItem('sessions:list'))
+            let sessions = JSON.parse(window.localStorage.getItem('sessions:list')) || []
 
             for (let session of sessions) {
                 $('#addSession').before(
@@ -1574,7 +1574,7 @@
 
         function loadSession(openSession, modal = false)
         {
-            let sessions = JSON.parse(window.localStorage.getItem('sessions:list'))
+            let sessions = JSON.parse(window.localStorage.getItem('sessions:list')) || []
             let index = sessions.findIndex(s => s === openSession)
 
             if (modal && index >= 0)
@@ -1623,7 +1623,7 @@
 
         function renameSession(newName)
         {
-            let sessions = JSON.parse(window.localStorage.getItem('sessions:list'))
+            let sessions = JSON.parse(window.localStorage.getItem('sessions:list')) || []
             let index = sessions.findIndex(s => s === newName)
 
             if (session.name === newName) {
@@ -1645,7 +1645,7 @@
 
         function deleteSession()
         {
-            let sessions = JSON.parse(window.localStorage.getItem('sessions:list'))
+            let sessions = JSON.parse(window.localStorage.getItem('sessions:list')) || []
             let index = sessions.findIndex(s => s === session.name)
             if (index >= 0)
                 sessions.splice(index, 1)
@@ -1680,7 +1680,7 @@
 
         function uploadJson(name)
         {
-            let sessions = JSON.parse(window.localStorage.getItem('sessions:list'))
+            let sessions = JSON.parse(window.localStorage.getItem('sessions:list')) || []
             let index = sessions.findIndex(s => s === name)
 
             if (index >= 0 || validatedSession == null)
@@ -1847,7 +1847,7 @@
         loadSession(window.localStorage.getItem('sessions:last'))
 
         $('#sessionName').change(function() {
-            let sessions = JSON.parse(window.localStorage.getItem('sessions:list'))
+            let sessions = JSON.parse(window.localStorage.getItem('sessions:list')) || []
             let nameInList = sessions.findIndex(s => s === $(this).val()) >= 0
 
             if (nameInList) {
@@ -1858,7 +1858,7 @@
         })
 
         $('#newSessionName').change(function() {
-            let sessions = JSON.parse(window.localStorage.getItem('sessions:list'))
+            let sessions = JSON.parse(window.localStorage.getItem('sessions:list')) || []
             let nameInList = sessions.findIndex(s => s === $(this).val()) >= 0
 
             if (nameInList && session.name !== $(this).val()) {
@@ -1900,7 +1900,7 @@
         })
 
         $('#jsonSessionName').change(function() {
-            let sessions = JSON.parse(window.localStorage.getItem('sessions:list'))
+            let sessions = JSON.parse(window.localStorage.getItem('sessions:list')) || []
             let nameInList = sessions.findIndex(s => s === $(this).val()) >= 0
 
             if (nameInList) {
