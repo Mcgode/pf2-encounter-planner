@@ -12,21 +12,66 @@
 
 <body>
     <!-- Body content -->
-    <div class="content d-flex flex-column vh-100">
-        <ul class="nav nav-tabs" id="mainTab" role="tablist">
-            <li class="nav-item">
-                <a class="nav-link active" id="planner-tab" data-toggle="tab" href="#planner" role="tab" aria-controls="planner" aria-selected="true">Encounter planner</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" id="history-tab" data-toggle="tab" href="#history" role="tab" aria-controls="history" aria-selected="false">Encounter history</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" id="settings-tab" data-toggle="tab" href="#settings" role="tab" aria-controls="settings" aria-selected="false">Session settings</a>
-            </li>
-        </ul>
+    <div class="d-flex flex-column vh-100 vw-100 overflow-hidden">
+        <div id="mainTab">
+            <div id="tabTop" class="row align-items-center">
+                <button class="btn btn-secondary dropdown-toggle col-md-auto" type="button" id="session-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <img src="resources/folder-24px.svg" alt="Open session">
+                    Open session
+                </button>
 
-        <div class="tab-content flex-fill" id="mainContent">
-            <div class="tab-pane fade show active" id="planner" role="tabpanel" aria-labelledby="planner-tab">
+                <a id="currentSession" class="col">Current session: </a>
+
+                <div class="dropdown-menu" aria-labelledby="session-dropdown">
+                    <a class="dropdown-item" id="addSession" data-toggle="modal" data-target="#addSessionModal">
+                        <strong class="font-weight-bolder">+</strong>
+                        Add a new session
+                    </a>
+                </div>
+
+                <div class="modal fade" id="addSessionModal" tabindex="-1" role="dialog" aria-labelledby="addSessionModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="addSessionModalLabel">Create a new session</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="addSessionForm" action="javascript:loadSession(sessionName.value, true)">
+                                    <div class="form-group">
+                                        <label for="sessionName" class="col-form-label">Session name:</label>
+                                        <input type="text" class="form-control" id="sessionName" name="sessionName">
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" onclick="document.forms['addSessionForm'].submit()">
+                                    Add session
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <ul class="nav nav-tabs" role="tablist" >
+                <li class="nav-item">
+                    <a class="nav-link active" id="planner-tab" data-toggle="tab" href="#planner" role="tab" aria-controls="planner" aria-selected="true">Encounter planner</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="history-tab" data-toggle="tab" href="#history" role="tab" aria-controls="history" aria-selected="false">Encounter history</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="settings-tab" data-toggle="tab" href="#settings" role="tab" aria-controls="settings" aria-selected="false">Session settings</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="tab-content flex-fill col" id="mainContent">
+            <div class="tab-pane fade show active bottom-padding overflow-auto" id="planner" role="tabpanel" aria-labelledby="planner-tab">
                 <h1>Encounter planner</h1>
 
                 <div class="accordion" id="encountersAccordion">
@@ -242,7 +287,7 @@
                 </div>
             </div>
 
-            <div class="tab-pane fade" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+            <div class="tab-pane fade bottom-padding overflow-auto" id="settings" role="tabpanel" aria-labelledby="settings-tab">
                 <h2>Session settings</h2>
 
                 <div class="form-group form-check" style="padding: 0 2em">
@@ -318,7 +363,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 
     <script>
-        let session = PF2EncounterPlanner.Session.makeSession()
+        let session = null
         let selectedEncounter = null
         let selectedElement = null
         let selectedTab = PF2EncounterPlanner.ComponentType.CUSTOM
@@ -343,6 +388,14 @@
             $('#setElementModalForm input').first().focus()
         })
 
+        let addSessionModal = $('#addSessionModal')
+            .on('shown.bs.modal', function() {
+                $('#sessionName').focus()
+            })
+            .on('show.bs.modal', function() {
+                $('#sessionName').val(null)
+            })
+
         let groupLevelFunction = $('#groupLevelFunction')
 
         let underLeveledPlayerXpMultiplier = $('#underLeveledPlayerXpMultiplier')
@@ -364,7 +417,7 @@
         function updatePlanner()
         {
             let accordion = $('#encountersAccordion')
-            accordion.children().empty()
+            accordion.empty()
 
             for (let encounter of session.encounters) {
                 addEncounterToAccordion(encounter)
@@ -1387,16 +1440,83 @@
             session.timeline.computeTimeline()
         }
 
+
+        function setUpSessions()
+        {
+            $(".session-dropdown-item").remove()
+
+            let sessions = JSON.parse(window.localStorage.getItem('sessions:list'))
+
+            for (let session of sessions) {
+                $('#addSession').before(
+                    $('<a></a>')
+                        .addClass('dropdown-item session-dropdown-item')
+                        .text(session)
+                        .click(_ => {
+                            loadSession(session)
+                        })
+                )
+            }
+        }
+
+
+        function loadSession(openSession, modal = false)
+        {
+            let sessions = JSON.parse(window.localStorage.getItem('sessions:list'))
+            let index = sessions.findIndex(s => s === openSession)
+
+            if (modal && index >= 0)
+                return;
+
+            if (index >= 0) {
+                sessions.splice(0, 0, ...sessions.splice(index, 1))
+                window.localStorage.setItem('sessions:list', JSON.stringify(sessions))
+            }
+
+            window.localStorage.setItem('sessions:last', openSession)
+
+            addSessionModal.modal('hide')
+
+            $('#currentSession').text(`Current session: ${openSession}`)
+
+            session = PF2EncounterPlanner.Session.makeSession(openSession)
+
+            updatePlanner()
+
+            setShowTimelinePlaceholder(session.timeline.events.length === 0)
+
+            for (let event of session.timeline.events) {
+                $('#timeline').append(makeTimelineDiv(event))
+            }
+
+            session.timeline.listener = _ => {
+                showEventsWithErrors()
+                refreshHistoryControls()
+            }
+            showEventsWithErrors()
+
+            $('#params-autoLevelUp')
+                .prop('checked', session.params.autoLevelUp)
+
+            $('#playersList').empty()
+
+            for (let player of session.params.players)
+                addPlayer(player)
+
+            session.saveSession()
+
+            setUpSessions()
+        }
+
+
         function onResize(_)
         {
             let bodyHeight = $("body div").height()
             let navTabHeight = $("#mainTab").outerHeight()
 
-            let history = $('#history').outerHeight(bodyHeight - navTabHeight, true)
-
-            let controlsHeight = $('#history-control').outerHeight()
-            console.log(history.outerHeight(), history.height(), controlsHeight)
-            // $('#history-content').outerHeight(history.height() - controlsHeight - 20)
+            $('#planner').outerHeight(bodyHeight - navTabHeight, true)
+            $('#history').outerHeight(bodyHeight - navTabHeight, true)
+            $('#settings').outerHeight(bodyHeight - navTabHeight, true)
         }
 
 
@@ -1404,8 +1524,6 @@
             animation: 150,
             onEnd: function (event) { session.moveEncounterIndex(event.oldIndex, event.newIndex) }
         })
-
-        updatePlanner()
 
         $('#fightPlayerExpectedAmount').change(function() {
             tmpFightComponent.expectedPlayers = Math.max(1, $(this).val())
@@ -1497,18 +1615,6 @@
             onAdd: deleteEvent
         })
 
-        setShowTimelinePlaceholder(session.timeline.events.length === 0)
-
-        for (let event of session.timeline.events) {
-            $('#timeline').append(makeTimelineDiv(event))
-        }
-
-        session.timeline.listener = _ => {
-            showEventsWithErrors()
-            refreshHistoryControls()
-        }
-        showEventsWithErrors()
-
         $('#timeline-delete-zone-background').append($('<h2>Drag here to delete element</h2>'))
 
         $('#additionalNPCsInput')
@@ -1522,14 +1628,10 @@
             })
 
         $('#params-autoLevelUp')
-            .prop('checked', session.params.autoLevelUp)
             .change(function() {
                 session.params.autoLevelUp = $(this).prop('checked')
                 session.saveSession()
             })
-
-        for (let player of session.params.players)
-            addPlayer(player)
 
         for (let functionName of Object.values(PF2EncounterPlanner.GroupLevelFunction)) {
             groupLevelFunction.append(
@@ -1552,6 +1654,19 @@
         underLeveledPlayerXpMultiplier.change(function() {
             session.params.underLeveledPlayerMultiplier = parseFloat($(this).val())
             session.saveSession()
+        })
+
+        setUpSessions()
+
+        loadSession(window.localStorage.getItem('sessions:last'))
+
+        $('#sessionName').change(function() {
+            let sessions = JSON.parse(window.localStorage.getItem('sessions:list'))
+            let nameInList = sessions.findIndex(s => s === $(this).val()) >= 0
+
+            if (nameInList) {
+                this.setCustomValidity("Name is already in use")
+            }
         })
 
         window.onresize = onResize

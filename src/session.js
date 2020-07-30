@@ -119,8 +119,27 @@ export class Session
     }
 
 
-    saveSession() {
+    saveSession()
+    {
+        let list = JSON.parse(window.localStorage.getItem('sessions:list')) || []
+        if (list.findIndex(s => s === this.name) < 0)
+            list.push(this.name)
+        window.localStorage.setItem('sessions:list', JSON.stringify(list))
+
         window.localStorage.setItem(`session:${this.name}`, this.exportToJSON())
+    }
+
+
+    changeName(newName)
+    {
+        let list = JSON.parse(window.localStorage.getItem('sessions:list')) || []
+        let index = list.findIndex(s => s === this.name)
+        if (index !== -1)
+            list.splice(index, 1)
+        window.localStorage.setItem('sessions:list', JSON.stringify(list))
+
+        this.name = newName
+        this.saveSession()
     }
 
 

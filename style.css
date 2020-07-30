@@ -100,3 +100,11 @@ html, body {
 #playersStatus .list-group-item .progress {
     width: 10em;
 }
+
+.bottom-padding {
+    padding-bottom: 1em !important;
+}
+
+#tabTop {
+    padding: 0.5em 1.5em;
+}
