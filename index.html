@@ -75,6 +75,33 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="modal fade" id="renameSessionModal" tabindex="-1" role="dialog" aria-labelledby="addSessionModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="renameSessionModalLabel">Rename the current session</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="renameSessionForm" action="javascript:renameSession(newSessionName.value)">
+                                    <div class="form-group">
+                                        <label for="newSessionName" class="col-form-label">Session name:</label>
+                                        <input type="text" class="form-control" id="newSessionName" name="newSessionName">
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" onclick="document.forms['renameSessionForm'].submit()">
+                                    Rename
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             
             <ul class="nav nav-tabs" role="tablist" >
@@ -338,6 +365,9 @@
                 </div>
 
                 <div class="row col">
+                    <button class="btn btn-outline-info btn-top-margin" id="renameSession" data-toggle="modal" data-target="#renameSessionModal">
+                        Rename session
+                    </button>
                     <button class="btn btn-outline-danger btn-top-margin" id="deleteSession" data-toggle="modal" data-target="#deleteSessionModal">
                         Delete session
                     </button>
@@ -420,6 +450,14 @@
             })
             .on('show.bs.modal', function() {
                 $('#sessionName').val(null)
+            })
+
+        let renameSessionModal = $('#renameSessionModal')
+            .on('shown.bs.modal', function() {
+                $('#newSessionName').focus()
+            })
+            .on('show.bs.modal', function() {
+                $('#newSessionName').val(session.name)
             })
 
         let groupLevelFunction = $('#groupLevelFunction')
@@ -1535,6 +1573,28 @@
         }
 
 
+        function renameSession(newName)
+        {
+            let sessions = JSON.parse(window.localStorage.getItem('sessions:list'))
+            let index = sessions.findIndex(s => s === newName)
+
+            if (session.name === newName) {
+                renameEncounterModal.modal('hide')
+                return;
+            } else if (index >= 0) {
+                return;
+            }
+
+            renameSessionModal.modal('hide')
+
+            session.changeName(newName)
+            window.localStorage.setItem('sessions:last', newName)
+            $('#currentSession').text(`Current session: ${newName}`)
+
+            setUpSessions()
+        }
+
+
         function deleteSession()
         {
             let sessions = JSON.parse(window.localStorage.getItem('sessions:list'))
@@ -1712,6 +1772,19 @@
 
             if (nameInList) {
                 this.setCustomValidity("Name is already in use")
+            } else {
+                this.setCustomValidity("")
+            }
+        })
+
+        $('#newSessionName').change(function() {
+            let sessions = JSON.parse(window.localStorage.getItem('sessions:list'))
+            let nameInList = sessions.findIndex(s => s === $(this).val()) >= 0
+
+            if (nameInList && session.name !== $(this).val()) {
+                this.setCustomValidity("Name is already in use")
+            } else {
+                this.setCustomValidity("")
             }
         })
 
