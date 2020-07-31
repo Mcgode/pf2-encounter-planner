@@ -81,7 +81,7 @@ export class Session
     }
 
 
-    isIdUsed(id)
+    isElementIdUsed(id)
     {
         for (let encounter of this.encounters) {
             for (let element of encounter.elements) {

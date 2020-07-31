@@ -442,7 +442,7 @@
         {
             do {
                 this.id = "element-"  + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
-            } while (session.isIdUsed(this.id))
+            } while (session.isElementIdUsed(this.id))
         }
 
 
@@ -827,7 +827,7 @@
         }
 
 
-        isIdUsed(id)
+        isElementIdUsed(id)
         {
             for (let encounter of this.encounters) {
                 for (let element of encounter.elements) {
