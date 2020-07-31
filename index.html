@@ -1585,6 +1585,8 @@
                 window.localStorage.setItem('sessions:list', JSON.stringify(sessions))
             }
 
+            $('#timeline').empty()
+
             window.localStorage.setItem('sessions:last', openSession)
 
             addSessionModal.modal('hide')
