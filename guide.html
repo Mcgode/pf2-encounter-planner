@@ -30,18 +30,26 @@
             padding-bottom: 0 !important;
             font-weight: bold;
         }
+
+        .secondary-nav-link {
+            padding-top: 0.75em;
+            padding-bottom: 0;
+        }
     </style>
 </head>
 
 <body class="vh-100 overflow-hidden">
     <!-- Body content -->
     <div class="row vw-100 vh-100 overflow-hidden">
-        <div class="col-2 h-100 border-right">
+        <div class="col-2 h-100 border-right overflow-auto">
             <a class="nav-link main-nav-link" href="#getting-started">Getting started</a>
 
             <a class="nav-link main-nav-link" href="#encounter-planner">Encounter planner</a>
             <div class="col">
-                <a class="nav-link" href="#encounters">Encounters</a>
+                <a class="nav-link secondary-nav-link" href="#encounters">Encounters</a>
+                <a class="nav-link secondary-nav-link" href="#encounter-elements">Encounter elements</a>
+                <a class="nav-link secondary-nav-link" href="#how-to-build-a-fight">How to build a fight</a>
+                <a class="nav-link secondary-nav-link" href="#how-to-build-hazards">How to build hazards</a>
             </div>
 
             <a class="nav-link main-nav-link" href="#encounter-history">Encounter history</a>
@@ -149,6 +157,107 @@
                             Note that you can also drag and drop the encounters to arrange in the order you want. You
                             can try it on this example.
                         </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h4 id="encounter-elements">Encounter elements</h4>
+
+                    <div>
+                        Encounter elements are events included in your encounters that include XP rewards. They appear
+                        in four different forms:
+                        <br>
+                        <ul>
+                            <li>
+                                <strong>Fight elements</strong>: An element representing a specific fight during the
+                                adventure. More info in the <a href="#how-to-build-a-fight">How to build a fight</a>
+                                section
+                            </li>
+                            <li>
+                                <strong>Accomplishment elements</strong>: Represents a minor, moderate or major
+                                accomplishment with XP values from the core rulebook (10, 30 or 80 xp).
+                            </li>
+                            <li>
+                                <strong>Hazard elements</strong>: Use this when your players will be facing a set of
+                                hazards. More info in the <a href="#how-to-build-hazards">How to build hazards</a>
+                                section
+                            </li>
+                            <li>
+                                <strong>Custom elements</strong>: Elements that don't belong in any other category, and
+                                give out a flat XP reward
+                            </li>
+                        </ul>
+
+                        Those elements are named, and there are no name restriction (you can have multiple elements with
+                        the same name for instance), can be modified by clicking on them, moved within the encounter
+                        with some drag and dropping, or even deleted as you see fit. <br>
+                        <div class="alert alert-info" style="margin-top: 1em">
+                            The displayed name will appear with additional information of the element, like the XP
+                            reward. This provides a preview of the element to provide user with a quicker access to
+                            the element's key information
+                        </div>
+
+                        Those elements will be used later when setting up an event timeline, in the encounter history.
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h4 id="how-to-build-a-fight">How to build a fight</h4>
+
+                    <div>
+                        A fight is an encounter element involving the players (and optionally some NPCs) fending off
+                        creatures. <br>
+                        Given the nature of the element, it can only provide an expected XP reward, given that the
+                        reward can be influenced by the number of players (and NPC allies) and the level of their group.
+
+                        <div class="alert alert-warning" style="margin-top: 1em">
+                            Note that, as of now, the tool only takes the group level, and not the individual levels,
+                            into account for calculating the XP reward for a given creature, given that it is how the
+                            core rulebooks expects DMs to handle XP rewards for combat. <br>
+                            However this tool provides options like group level function selection to adapt to your
+                            preferences if it comes to this. <br>
+                            Note also that the tool also handles the XP of players individually, it just grants the same
+                            base XP to all of the participants of the fight and as such needs to use a group level.
+                        </div>
+
+                        <br>
+                        Once it is done, you need to set up the enemies involved in this fight. For each creature you
+                        need to set:
+                        <ul>
+                            <li>
+                                Name (optional): The name of the creature
+                            </li>
+                            <li>
+                                Level: The level of the creature
+                            </li>
+                            <li>
+                                Amount: The amount of instances of this creature in the fight
+                            </li>
+                            <li>
+                                Link (optional): The name of the creature
+                            </li>
+                        </ul>
+
+                        <br>
+                        During this entire process, the tool will give you a preview of the XP rewards for each
+                        individual creature, and the entire fight, based off the data you provided earlier. It will
+                        give the fight a rating, going from 'Trivial' to 'Extreme', with an additional
+                        'Impossible' rating
+
+                        <div class="alert alert-warning" style="margin-top: 1em">
+                            Remember that the 'Extreme' rating is meant to be the highest rating, according to the core
+                            rulebook. If you still want to have an 'Impossible' rating, remember to allow impossible
+                            encounters in the session settings
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h4 id="how-to-build-hazards">How to build hazards</h4>
+
+                    <div>
+                        Hazards are handled in a similar manner to fights, with two differences: the group count does
+                        not influence the XP reward, and an individual can be a simple hazard, or a complex one.
                     </div>
                 </div>
             </div>
