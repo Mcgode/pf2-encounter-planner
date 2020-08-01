@@ -62,6 +62,13 @@
             </div>
 
             <a class="nav-link main-nav-link" href="#session-settings">Session settings</a>
+            <div class="col">
+                <a class="nav-link secondary-nav-link" href="#auto-level-up">Auto level up</a>
+                <a class="nav-link secondary-nav-link" href="#allow-impossible-encounters">Allow impossible encounters</a>
+                <a class="nav-link secondary-nav-link" href="#group-level-function">Group level function</a>
+                <a class="nav-link secondary-nav-link" href="#under-leveled-player-xp-multiplier">Under-leveled player XP multiplier</a>
+                <a class="nav-link secondary-nav-link" href="#list-of-players">List of players</a>
+            </div>
         </div>
 
         <div class="col h-100 overflow-auto" style="padding-right: 2em">
@@ -353,6 +360,12 @@
                         of the timeline. <br>
                         If an event is selected, it will display the evolution of the players experience and levels
                         from before the event to after the event.
+
+                        <div class="alert alert-warning" style="margin-top: 1em">
+                            Note that the XP calculation is based off the current level of the players, not their
+                            potential level. If this is not the behaviour you expect, level up the players preemptively
+                            or use the auto level up feature when it will be available.
+                        </div>
                     </div>
                 </div>
 
@@ -373,7 +386,73 @@
             <h2 id="session-settings">Session settings</h2>
 
             <div>
+                The session settings tab allows you to set session-wide parameters.
 
+                <div class="col">
+                    <h4 id="auto-level-up">Auto level up</h4>
+
+                    <div>
+                        <div class="alert alert-danger">
+                            This feature is not available at the moment. It will come at a later date.
+                        </div>
+
+                        If you enable this setting, the timeline will place the level-up events automatically as soon
+                        as a player can level up. <br>
+                        You won't be able to manually place level up events anymore, and all previous level up
+                        events will be erased.
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h4 id="allow-impossible-encounters">Allow impossible encounters</h4>
+
+                    <div>
+                        If you enable this setting, the timeline will allow fights with an 'Impossible rating' and thus
+                        take their xp into account. <br>
+                        Disabled by default.
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h4 id="group-level-function">Group level function</h4>
+
+                    <div>
+                        The approximation function used for determining the level a given group of sub-group of players.<br>
+                        Defaults to 'Maximum player level'.
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h4 id="under-leveled-player-xp-multiplier">Under-leveled player XP multiplier</h4>
+
+                    <div>
+                        Sets an XP multiplier for players with a lower level than his companions. This multiplier will
+                        apply to any XP he earns until he has reached the same equivalent xp value as his target
+                        teammate. <br>
+                        The target teammate is the teammate that has the lowest xp between the teammates that have
+                        reached the target level.<br>
+                        An under-leveled player will always earn at least the original XP reward, his bonus xp will just
+                        be adjusted to prevent him from overtaking his teammate too much.<br>
+                        <br>
+                        Set to x2 by default. Set to x1 to disable
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h4 id="list-of-players">List of players</h4>
+
+                    <div>
+                        This list allows you to declare your players. Each player is given a name, a starting level and
+                        starting XP. Those are the stats of the player at the start of the timeline. <br>
+                        <br>
+                        You can rearrange, modify or even delete players as you see fit.
+
+                        <div class="alert alert-warning" style="margin-top: 1em">
+                            If you add a player to the session, he won't be added to the events already added to the
+                            timeline. However, any new event will feature this new player by default.
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
