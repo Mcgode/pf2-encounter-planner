@@ -17,6 +17,7 @@ type SessionPlayer = {
 
 type SessionParams = {
     autoLevelUp: boolean,
+    allowImpossibleEncounters: boolean,
     groupLevelFunction: string,
     underLeveledPlayerMultiplier: number,
     players: [SessionPlayer]
