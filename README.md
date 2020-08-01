@@ -10,8 +10,6 @@ but some features might be missing. And you might find some bugs.
 
 - **Auto leveling** : Will automatically set the level up events in the 
 timeline to always keep the players at the maximum possible level
-- **Guide**: A user-friendly guide for explaining to new users how to use the tool. 
-Will most likely be a dedicated web page
 - **Branching encounters planner ?**: Display estimated xp for a given encounter, and 
 plan branching routes ahead. Should allow for a better xp planning
 - **Online saving ?**: Allow users to log in to a 3rd party online service like Google
