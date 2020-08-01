@@ -121,7 +121,7 @@ export class Timeline
                                 let eP = component.expectedPlayers, eL = component.expectedLevel
                                 component.expectedLevel = level; component.expectedPlayers = players.length + event.additionalNPCs
                                 let rating = component.getEncounterRating()
-                                if (rating === EncounterRating.IMPOSSIBLE) {
+                                if (!this.session.params.allowImpossibleEncounters && rating === EncounterRating.IMPOSSIBLE) {
                                     this.errorEvents.push({event: event, reason: "Impossible encounter"})
                                     xp = null
                                 } else {
