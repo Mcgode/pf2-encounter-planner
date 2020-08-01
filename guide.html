@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en" class="vh-100 overflow-hidden">
+<head>
+    <meta charset="UTF-8">
+    <title>How to use the tool - PF2 Encounter planner</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+    <style>
+        h1 {
+            margin-top: 1em;
+            margin-bottom: 2em;
+        }
+
+        h2 {
+            margin-top: 1em;
+            margin-bottom: 1em;
+        }
+
+        h4 {
+            margin-top: 2em;
+            margin-bottom: 1em;
+        }
+
+        hr {
+            margin-top: 3em;
+        }
+
+        .main-nav-link {
+            padding-top: 1.5em !important;
+            padding-bottom: 0 !important;
+            font-weight: bold;
+        }
+
+        .secondary-nav-link {
+            padding-top: 0.75em;
+            padding-bottom: 0;
+        }
+    </style>
+</head>
+
+<body class="vh-100 overflow-hidden">
+    <!-- Body content -->
+    <div class="row vw-100 vh-100 overflow-hidden">
+        <div class="col-2 h-100 border-right overflow-auto">
+            <a class="nav-link main-nav-link" href="#getting-started">Getting started</a>
+
+            <a class="nav-link main-nav-link" href="#encounter-planner">Encounter planner</a>
+            <div class="col">
+                <a class="nav-link secondary-nav-link" href="#encounters">Encounters</a>
+                <a class="nav-link secondary-nav-link" href="#encounter-elements">Encounter elements</a>
+                <a class="nav-link secondary-nav-link" href="#how-to-build-a-fight">How to build a fight</a>
+                <a class="nav-link secondary-nav-link" href="#how-to-build-hazards">How to build hazards</a>
+            </div>
+
+            <a class="nav-link main-nav-link" href="#encounter-history">Encounter history</a>
+            <div class="col">
+                <a class="nav-link secondary-nav-link" href="#editing-the-timeline-events">Editing the timeline events</a>
+                <a class="nav-link secondary-nav-link" href="#leveling-up">Leveling up</a>
+                <a class="nav-link secondary-nav-link" href="#configuring-an-event">Configuring an event</a>
+                <a class="nav-link secondary-nav-link" href="#xp-calculation">XP calculation</a>
+                <a class="nav-link secondary-nav-link" href="#error-in-timeline">Errors in the timeline</a>
+            </div>
+
+            <a class="nav-link main-nav-link" href="#session-settings">Session settings</a>
+            <div class="col">
+                <a class="nav-link secondary-nav-link" href="#auto-level-up">Auto level up</a>
+                <a class="nav-link secondary-nav-link" href="#allow-impossible-encounters">Allow impossible encounters</a>
+                <a class="nav-link secondary-nav-link" href="#group-level-function">Group level function</a>
+                <a class="nav-link secondary-nav-link" href="#under-leveled-player-xp-multiplier">Under-leveled player XP multiplier</a>
+                <a class="nav-link secondary-nav-link" href="#list-of-players">List of players</a>
+            </div>
+
+            <a class="nav-link main-nav-link" href="#faq">Frequently asked questions</a>
+        </div>
+
+        <div class="col h-100 overflow-auto" style="padding-right: 2em">
+            <h1>How to use PF2 Encounter planner</h1>
+
+            <hr>
+
+            <h2 id="getting-started" style="margin-bottom: 1em">Getting started</h2>
+
+            <div>
+                PF2 Encounter Planner is an open-source tool aimed primarily at Pathfinder 2nd edition Dungeon
+                Masters. <br>
+                Its main goal is to assist the DM in his encounter planning task by providing him the tools for building
+                encounters, be them composed of fights, hazards, or even simply dialog encounters that might reward the
+                players for their cunning and actions. <br>
+                The tool also provides encounter history feature, which allows the DM to set up an event timeline, to
+                calculate the experience of his players. <br>
+                <br>
+                So let's <a href="/" target="_blank">launch to tool</a>, shall we? <br>
+                Upon opening this tool for the first time, you will have an example session opened for you. So first of
+                all what is a session ? <br>
+                A session is meant to represent an adventure, or a collection of smaller, related adventures (this is up
+                to you to decide). Each session is independent from one another, so you can have different rules and
+                players, specific to each one. As such, the tool only keeps one of them open at a time. <br>
+                <br>
+                The tool itself is divided in three main tabs :
+                <ul>
+                    <li>
+                        The <a href="#encounter-planner">encounter planner</a> tab, where you can create named encounters and defines its elements. You
+                        will most likely use this tab before your game sessions, during the DM preparation phase.
+                    </li>
+                    <li>
+                        The <a href="#encounter-history">encounter history</a> tab, where you will be able to set up a
+                        timeline of the events that unfolded during your game(s). It will help you in counting the xp
+                        rewards for your players.
+                    </li>
+                    <li>
+                        The <a href="#session-settings">session settings</a> tab, where you'll be able to configure
+                        parameters for the session, like under-leveled player xp multipliers and the like. This is also
+                        where you can declare the players involved in this session.
+                    </li>
+                </ul>
+
+                <div class="alert alert-info">
+                    Every time you make a change to the session or its content, that change will be saved to your browser
+                    local storage, allowing you to reload the tool later and still keep its content
+                </div>
+
+                Finally, you also have a top bar for special actions like opening another session or creating a new one.
+            </div>
+
+            <hr>
+
+            <h2 id="encounter-planner">Encounter planner</h2>
+
+            <div>
+                As the name suggests, the encounter planner will be your go-to tab for planning out your encounters in a
+                given session.
+
+                <div class="col">
+                    <h4 id="encounters">Encounters</h4>
+
+                    <div>
+                        Encounters are meant to scale from a simple fight, conversation or the like, up to a
+                        fully-fledged part of your adventure. Basically, it is a set of milestone elements for a
+                        specific part of your adventure. <br>
+                        Those encounters have unique names and can be created, renamed, moved and deleted as you see
+                        fit. <br>
+                        <br>
+                        Selecting an encounter will toggle the collapse of its inner content. A quick demonstration :
+
+                        <div class="accordion" id="encounters-accordion-demonstration" style="margin-top: 1em">
+                            <div class="card">
+                                <div class="card-header" id="encounters-demonstration-h-1">
+                                    <h3 class="mb-0">
+                                        <button class="btn btn-block text-left" type="button" data-toggle="collapse" data-target="#encounters-demonstration-collapse-1" aria-expanded="false" aria-controls="encounters-demonstration-collapse-1">
+                                            Encounter #1 (click me)
+                                        </button>
+                                    </h3>
+                                </div>
+                                <div id="encounters-demonstration-collapse-1" class="collapse" aria-labelledby="encounters-demonstration-h-1" data-parent="#encounters-accordion-demonstration">
+                                    <div class="card-body">Here will be displayed the content of <strong>Encounter #1</strong></div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header" id="encounters-demonstration-h-2">
+                                    <h3 class="mb-0">
+                                        <button class="btn btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#encounters-demonstration-collapse-2" aria-expanded="false" aria-controls="encounters-demonstration-collapse-2">
+                                            Encounter #2 (click me)
+                                        </button>
+                                    </h3>
+                                </div>
+                                <div id="encounters-demonstration-collapse-2" class="collapse" aria-labelledby="encounters-demonstration-h-2" data-parent="#encounters-accordion-demonstration">
+                                    <div class="card-body">Here will be displayed the content of <strong>Encounter #2</strong></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info" style="margin-top: 1em">
+                            Note that you can also drag and drop the encounters to arrange in the order you want. You
+                            can try it on this example.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h4 id="encounter-elements">Encounter elements</h4>
+
+                    <div>
+                        Encounter elements are events included in your encounters that include XP rewards. They appear
+                        in four different forms:
+                        <br>
+                        <ul>
+                            <li>
+                                <strong>Fight elements</strong>: An element representing a specific fight during the
+                                adventure. More info in the <a href="#how-to-build-a-fight">How to build a fight</a>
+                                section
+                            </li>
+                            <li>
+                                <strong>Accomplishment elements</strong>: Represents a minor, moderate or major
+                                accomplishment with XP values from the core rulebook (10, 30 or 80 xp).
+                            </li>
+                            <li>
+                                <strong>Hazard elements</strong>: Use this when your players will be facing a set of
+                                hazards. More info in the <a href="#how-to-build-hazards">How to build hazards</a>
+                                section
+                            </li>
+                            <li>
+                                <strong>Custom elements</strong>: Elements that don't belong in any other category, and
+                                give out a flat XP reward
+                            </li>
+                        </ul>
+
+                        Those elements are named, and there are no name restriction (you can have multiple elements with
+                        the same name for instance), can be modified by clicking on them, moved within the encounter
+                        with some drag and dropping, or even deleted as you see fit. <br>
+                        <div class="alert alert-info" style="margin-top: 1em">
+                            The displayed name will appear with additional information of the element, like the XP
+                            reward. This provides a preview of the element to provide user with a quicker access to
+                            the element's key information
+                        </div>
+
+                        Those elements will be used later when setting up an event timeline, in the encounter history.
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h4 id="how-to-build-a-fight">How to build a fight</h4>
+
+                    <div>
+                        A fight is an encounter element involving the players (and optionally some NPCs) fending off
+                        creatures. <br>
+                        Given the nature of the element, it can only provide an expected XP reward, given that the
+                        reward can be influenced by the number of players (and NPC allies) and the level of their group.
+
+                        <div class="alert alert-warning" style="margin-top: 1em">
+                            Note that, as of now, the tool only takes the group level, and not the individual levels,
+                            into account for calculating the XP reward for a given creature, given that it is how the
+                            core rulebooks expects DMs to handle XP rewards for combat. <br>
+                            However this tool provides options like group level function selection to adapt to your
+                            preferences if it comes to this. <br>
+                            Note also that the tool also handles the XP of players individually, it just grants the same
+                            base XP to all of the participants of the fight and as such needs to use a group level.
+                        </div>
+
+                        <br>
+                        Once it is done, you need to set up the enemies involved in this fight. For each creature you
+                        need to set:
+                        <ul>
+                            <li>
+                                Name (optional): The name of the creature
+                            </li>
+                            <li>
+                                Level: The level of the creature
+                            </li>
+                            <li>
+                                Amount: The amount of instances of this creature in the fight
+                            </li>
+                            <li>
+                                Link (optional): The name of the creature
+                            </li>
+                        </ul>
+
+                        <br>
+                        During this entire process, the tool will give you a preview of the XP rewards for each
+                        individual creature, and the entire fight, based off the data you provided earlier. It will
+                        give the fight a rating, going from 'Trivial' to 'Extreme', with an additional
+                        'Impossible' rating
+
+                        <div class="alert alert-warning" style="margin-top: 1em">
+                            Remember that the 'Extreme' rating is meant to be the highest rating, according to the core
+                            rulebook. If you still want to have an 'Impossible' rating, remember to allow impossible
+                            encounters in the session settings
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h4 id="how-to-build-hazards">How to build hazards</h4>
+
+                    <div>
+                        Hazards are handled in a similar manner to fights, with two differences: the group count does
+                        not influence the XP reward, and an individual can be a simple hazard, or a complex one.
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+
+            <h2 id="encounter-history">Encounter history</h2>
+
+            <div>
+                This tab's goal is to allow you to calculate the XP repartition for the players at the end of your game
+                session. To do this you will need to make an event timeline, which is created by filling it with
+                instances of the encounter elements you've set up previously in the encounter planner tab. <br>
+                <br>
+                The tab is divided in three parts:
+                <ul>
+                    <li>
+                        The planned encounters to the left. Gives access to the list of encounter elements you want
+                        to add to your timeline as events. They are sorted by encounter, and stowed into an accordion
+                        display.
+                    </li>
+
+                    <li>
+                        The timeline to the right. This is where you will set up and arrange your game session
+                        timeline. The timeline top is the time origin.
+                    </li>
+
+                    <li>
+                        The history controls, to the bottom, which serves both as a display and a configuration pane.
+                        This is where you will find the player XP status, and event controls.
+                    </li>
+                </ul>
+
+                <div class="col">
+                    <h4 id="editing-the-timeline-events">Editing the timeline events</h4>
+
+                    <div>
+                        To add an event to the timeline, you just need to drag an encounter element from the left pane,
+                        and drop it in the timeline to the right. <br>
+                        The tool will automatically instantiate a new event corresponding to the encounter event. Note
+                        that this means you can have as many events based off the same encounter element as you want.
+
+                        <br>
+                        You can move the events around the timeline using drag and drop once again. <br>
+                        You can also delete any event by dropping it into the appropriately-labeled delete zone
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h4 id="leveling-up">Leveling up</h4>
+
+                    <div>
+                        If your players level up during the game session, you will need to add the corresponding event
+                        to the timeline. <br>
+                        To add a level up event, you just need to drag and drop the "LEVEL UP!" element from the top of
+                        the left pane to the timeline.<br>
+
+                        <div class="alert alert-warning" style="margin-top: 1em">
+                            The level up event will only trigger for the players that have enough XP to level up, and
+                            will only level the players by one level.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h4 id="configuring-an-event">Configuring an event</h4>
+
+                    <div>
+                        A specific event can be configured in the history controls. <br>
+                        <br>
+                        To do so, first select that event by clicking it in the timeline. <br>
+                        You now have the possibility to select which players will participate to this event. If they
+                        don't participate, they are not counted in the group calculations (group level or group count).
+                        <br>
+                        You also have the possibility of adding NPCs that will contribute to the group count (but not
+                        its level)
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h4 id="xp-calculation">XP calculation</h4>
+
+                    <div>
+                        XP calculation is done every time the timeline is edited to keep the timeline up to date.<br>
+                        <br>
+                        When no event is selected, the history controls will display the player XP status at the end
+                        of the timeline. <br>
+                        If an event is selected, it will display the evolution of the players experience and levels
+                        from before the event to after the event.
+
+                        <div class="alert alert-warning" style="margin-top: 1em">
+                            Note that the XP calculation is based off the current level of the players, not their
+                            potential level. If this is not the behaviour you expect, level up the players preemptively
+                            or use the auto level up feature when it will be available.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h4 id="error-in-timeline">Errors in the timeline</h4>
+
+                    <div>
+                        Sometimes, you might get an error for a specific event. If that happens, the event tooltip
+                        will describe what kind of issue it is. <br>
+                        <br>
+                        Note that the XP calculation is a safe process, and will simply ignore those events.
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+
+            <h2 id="session-settings">Session settings</h2>
+
+            <div>
+                The session settings tab allows you to set session-wide parameters.
+
+                <div class="col">
+                    <h4 id="auto-level-up">Auto level up</h4>
+
+                    <div>
+                        <div class="alert alert-danger">
+                            This feature is not available at the moment. It will come at a later date.
+                        </div>
+
+                        If you enable this setting, the timeline will place the level-up events automatically as soon
+                        as a player can level up. <br>
+                        You won't be able to manually place level up events anymore, and all previous level up
+                        events will be erased.
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h4 id="allow-impossible-encounters">Allow impossible encounters</h4>
+
+                    <div>
+                        If you enable this setting, the timeline will allow fights with an 'Impossible rating' and thus
+                        take their xp into account. <br>
+                        Disabled by default.
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h4 id="group-level-function">Group level function</h4>
+
+                    <div>
+                        The approximation function used for determining the level a given group of sub-group of players.<br>
+                        Defaults to 'Maximum player level'.
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h4 id="under-leveled-player-xp-multiplier">Under-leveled player XP multiplier</h4>
+
+                    <div>
+                        Sets an XP multiplier for players with a lower level than his companions. This multiplier will
+                        apply to any XP he earns until he has reached the same equivalent xp value as his target
+                        teammate. <br>
+                        The target teammate is the teammate that has the lowest xp between the teammates that have
+                        reached the target level.<br>
+                        An under-leveled player will always earn at least the original XP reward, his bonus xp will just
+                        be adjusted to prevent him from overtaking his teammate too much.<br>
+                        <br>
+                        Set to x2 by default. Set to x1 to disable
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h4 id="list-of-players">List of players</h4>
+
+                    <div>
+                        This list allows you to declare your players. Each player is given a name, a starting level and
+                        starting XP. Those are the stats of the player at the start of the timeline. <br>
+                        <br>
+                        You can rearrange, modify or even delete players as you see fit.
+
+                        <div class="alert alert-warning" style="margin-top: 1em">
+                            If you add a player to the session, he won't be added to the events already added to the
+                            timeline. However, any new event will feature this new player by default.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+
+            <h2 id="faq">Frequently asked questions</h2>
+
+            <div style="margin-bottom: 4em">
+
+                If any additional question come up I will answer it here.
+
+                <div class="col">
+                    <h4 id="found-bug-question">I found a bug, where do I report it ?</h4>
+
+                    <div>
+                        You can report the bug <a href="https://github.com/Mcgode/pf2-encounter-planner/issues" target="_blank">
+                        here</a>. <br>
+                        Please try to be exhaustive in your bug description (screenshot, how you found it,...)
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h4 id="contributing-question">Can I contribute to the project ?</h4>
+
+                    <div>
+                        Yes you can: <a href="https://github.com/Mcgode/pf2-encounter-planner" target="_blank">
+                        https://github.com/Mcgode/pf2-encounter-planner</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+
+    <script>
+        Sortable.create(document.getElementById('encounters-accordion-demonstration'), { animation: 150 })
+    </script>
+</body>
+</html>
