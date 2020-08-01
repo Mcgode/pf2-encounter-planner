@@ -53,6 +53,13 @@
             </div>
 
             <a class="nav-link main-nav-link" href="#encounter-history">Encounter history</a>
+            <div class="col">
+                <a class="nav-link secondary-nav-link" href="#editing-the-timeline-events">Editing the timeline events</a>
+                <a class="nav-link secondary-nav-link" href="#leveling-up">Leveling up</a>
+                <a class="nav-link secondary-nav-link" href="#configuring-an-event">Configuring an event</a>
+                <a class="nav-link secondary-nav-link" href="#xp-calculation">XP calculation</a>
+                <a class="nav-link secondary-nav-link" href="#error-in-timeline">Errors in the timeline</a>
+            </div>
 
             <a class="nav-link main-nav-link" href="#session-settings">Session settings</a>
         </div>
@@ -267,7 +274,98 @@
             <h2 id="encounter-history">Encounter history</h2>
 
             <div>
+                This tab's goal is to allow you to calculate the XP repartition for the players at the end of your game
+                session. To do this you will need to make an event timeline, which is created by filling it with
+                instances of the encounter elements you've set up previously in the encounter planner tab. <br>
+                <br>
+                The tab is divided in three parts:
+                <ul>
+                    <li>
+                        The planned encounters to the left. Gives access to the list of encounter elements you want
+                        to add to your timeline as events. They are sorted by encounter, and stowed into an accordion
+                        display.
+                    </li>
 
+                    <li>
+                        The timeline to the right. This is where you will set up and arrange your game session
+                        timeline. The timeline top is the time origin.
+                    </li>
+
+                    <li>
+                        The history controls, to the bottom, which serves both as a display and a configuration pane.
+                        This is where you will find the player XP status, and event controls.
+                    </li>
+                </ul>
+
+                <div class="col">
+                    <h4 id="editing-the-timeline-events">Editing the timeline events</h4>
+
+                    <div>
+                        To add an event to the timeline, you just need to drag an encounter element from the left pane,
+                        and drop it in the timeline to the right. <br>
+                        The tool will automatically instantiate a new event corresponding to the encounter event. Note
+                        that this means you can have as many events based off the same encounter element as you want.
+
+                        <br>
+                        You can move the events around the timeline using drag and drop once again. <br>
+                        You can also delete any event by dropping it into the appropriately-labeled delete zone
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h4 id="leveling-up">Leveling up</h4>
+
+                    <div>
+                        If your players level up during the game session, you will need to add the corresponding event
+                        to the timeline. <br>
+                        To add a level up event, you just need to drag and drop the "LEVEL UP!" element from the top of
+                        the left pane to the timeline.<br>
+
+                        <div class="alert alert-warning" style="margin-top: 1em">
+                            The level up event will only trigger for the players that have enough XP to level up, and
+                            will only level the players by one level.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h4 id="configuring-an-event">Configuring an event</h4>
+
+                    <div>
+                        A specific event can be configured in the history controls. <br>
+                        <br>
+                        To do so, first select that event by clicking it in the timeline. <br>
+                        You now have the possibility to select which players will participate to this event. If they
+                        don't participate, they are not counted in the group calculations (group level or group count).
+                        <br>
+                        You also have the possibility of adding NPCs that will contribute to the group count (but not
+                        its level)
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h4 id="xp-calculation">XP calculation</h4>
+
+                    <div>
+                        XP calculation is done every time the timeline is edited to keep the timeline up to date.<br>
+                        <br>
+                        When no event is selected, the history controls will display the player XP status at the end
+                        of the timeline. <br>
+                        If an event is selected, it will display the evolution of the players experience and levels
+                        from before the event to after the event.
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h4 id="error-in-timeline">Errors in the timeline</h4>
+
+                    <div>
+                        Sometimes, you might get an error for a specific event. If that happens, the event tooltip
+                        will describe what kind of issue it is. <br>
+                        <br>
+                        Note that the XP calculation is a safe process, and will simply ignore those events.
+                    </div>
+                </div>
             </div>
 
             <hr>
