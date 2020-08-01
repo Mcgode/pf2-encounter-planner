@@ -24,6 +24,12 @@
         hr {
             margin-top: 3em;
         }
+
+        .main-nav-link {
+            padding-top: 1.5em !important;
+            padding-bottom: 0 !important;
+            font-weight: bold;
+        }
     </style>
 </head>
 
@@ -31,10 +37,16 @@
     <!-- Body content -->
     <div class="row vw-100 vh-100 overflow-hidden">
         <div class="col-2 h-100 border-right">
-            <a class="nav-link" href="#getting-started">Getting started</a>
-            <a class="nav-link" href="#encounter-planner">Encounter planner</a>
-            <a class="nav-link" href="#encounter-history">Encounter history</a>
-            <a class="nav-link" href="#session-settings">Session settings</a>
+            <a class="nav-link main-nav-link" href="#getting-started">Getting started</a>
+
+            <a class="nav-link main-nav-link" href="#encounter-planner">Encounter planner</a>
+            <div class="col">
+                <a class="nav-link" href="#encounters">Encounters</a>
+            </div>
+
+            <a class="nav-link main-nav-link" href="#encounter-history">Encounter history</a>
+
+            <a class="nav-link main-nav-link" href="#session-settings">Session settings</a>
         </div>
 
         <div class="col h-100 overflow-auto" style="padding-right: 2em">
