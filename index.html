@@ -22,7 +22,9 @@
 
                 <a id="currentSession" class="col">Current session: </a>
 
-                <button class="btn btn-secondary col-md-auto" type="button" onclick="downloadJSON()">
+                <a href="/guide.html" target="_blank" class="btn btn-info">Help</a>
+
+                <button class="btn btn-secondary col-md-auto" type="button" style="margin-left: 0.5em" onclick="downloadJSON()">
                     <img src="resources/get_app-24px.svg" alt="Download">
                     Download JSON
                 </button>
@@ -139,6 +141,26 @@
                                 <button type="button" class="btn btn-primary" onclick="document.forms['uploadJsonForm'].submit()">
                                     Import
                                 </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="welcomeModal" tabindex="-1" role="dialog" aria-labelledby="welcomeModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="welcomeModalLabel">Welcome to the PF2 Encounter planner</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                It looks like it's your first time here. If so, now that you have a guide
+                                <a href="/guide.html" target="_blank">here</a>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                             </div>
                         </div>
                     </div>
@@ -1873,6 +1895,8 @@
         if (last != null) {
             loadSession(last)
         } else {
+            $('#welcomeModal').modal('show')
+
             $.getJSON('resources/Example.json', data => {
                 let session = PF2EncounterPlanner.Session.importFromJSON(JSON.stringify(data))
                 session.name = "Example"
