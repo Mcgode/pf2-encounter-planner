@@ -383,6 +383,11 @@
                     <label for="params-autoLevelUp" class="form-check-label">Automatic level up</label>
                 </div>
 
+                <div class="form-group form-check" style="padding: 0 2em">
+                    <input type="checkbox" id="params-allowImpossibleEncounters" class="form-check-input">
+                    <label for="params-allowImpossibleEncounters" class="form-check-label">Allow impossible encounters</label>
+                </div>
+
                 <div class="form-group">
                     <label for="groupLevelFunction" class="col-form-label">Group level function:</label>
                     <select id="groupLevelFunction" class="form-control"></select>
@@ -1478,6 +1483,18 @@
         }
 
 
+        function updateSettings()
+        {
+            $('#params-autoLevelUp').prop('checked', session.params.autoLevelUp)
+
+            $('#params-allowImpossibleEncounters').prop('checked', session.params.allowImpossibleEncounters)
+
+            groupLevelFunction.val(session.params.groupLevelFunction)
+
+            underLeveledPlayerXpMultiplier.val(session.params.underLeveledPlayerMultiplier)
+        }
+
+
         function addPlayer(player)
         {
             let list = $('#playersList')
@@ -1609,8 +1626,7 @@
             }
             showEventsWithErrors()
 
-            $('#params-autoLevelUp')
-                .prop('checked', session.params.autoLevelUp)
+            updateSettings()
 
             $('#playersList').empty()
 
@@ -1815,10 +1831,22 @@
                 }
             })
 
+        $('#settings-tab').on('show.bs.tab', function() {
+            updateSettings()
+        })
+
         $('#params-autoLevelUp')
             .change(function() {
                 session.params.autoLevelUp = $(this).prop('checked')
                 session.saveSession()
+                session.timeline.computeTimeline()
+            })
+
+        $('#params-allowImpossibleEncounters')
+            .change(function() {
+                session.params.allowImpossibleEncounters = $(this).prop('checked')
+                session.saveSession()
+                session.timeline.computeTimeline()
             })
 
         for (let functionName of Object.values(PF2EncounterPlanner.GroupLevelFunction)) {
@@ -1828,11 +1856,6 @@
                     .text(functionName)
             )
         }
-
-        $('#settings-tab').on('show.bs.tab', function() {
-            groupLevelFunction.val(session.params.groupLevelFunction)
-            underLeveledPlayerXpMultiplier.val(session.params.underLeveledPlayerMultiplier)
-        })
 
         groupLevelFunction.change(function() {
             session.params.groupLevelFunction = $(this).val()
