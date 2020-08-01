@@ -15,6 +15,15 @@
             margin-top: 1em;
             margin-bottom: 1em;
         }
+
+        h4 {
+            margin-top: 2em;
+            margin-bottom: 1em;
+        }
+
+        hr {
+            margin-top: 3em;
+        }
     </style>
 </head>
 
@@ -82,7 +91,54 @@
             <h2 id="encounter-planner">Encounter planner</h2>
 
             <div>
+                As the name suggests, the encounter planner will be your go-to tab for planning out your encounters in a
+                given session.
 
+                <div class="col">
+                    <h4 id="encounters">Encounters</h4>
+
+                    <div>
+                        Encounters are meant to scale from a simple fight, conversation or the like, up to a
+                        fully-fledged part of your adventure. Basically, it is a set of milestone elements for a
+                        specific part of your adventure. <br>
+                        Those encounters have unique names and can be created, renamed, moved and deleted as you see
+                        fit. <br>
+                        <br>
+                        Selecting an encounter will toggle the collapse of its inner content. A quick demonstration :
+
+                        <div class="accordion" id="encounters-accordion-demonstration" style="margin-top: 1em">
+                            <div class="card">
+                                <div class="card-header" id="encounters-demonstration-h-1">
+                                    <h3 class="mb-0">
+                                        <button class="btn btn-block text-left" type="button" data-toggle="collapse" data-target="#encounters-demonstration-collapse-1" aria-expanded="false" aria-controls="encounters-demonstration-collapse-1">
+                                            Encounter #1 (click me)
+                                        </button>
+                                    </h3>
+                                </div>
+                                <div id="encounters-demonstration-collapse-1" class="collapse" aria-labelledby="encounters-demonstration-h-1" data-parent="#encounters-accordion-demonstration">
+                                    <div class="card-body">Here will be displayed the content of <strong>Encounter #1</strong></div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header" id="encounters-demonstration-h-2">
+                                    <h3 class="mb-0">
+                                        <button class="btn btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#encounters-demonstration-collapse-2" aria-expanded="false" aria-controls="encounters-demonstration-collapse-2">
+                                            Encounter #2 (click me)
+                                        </button>
+                                    </h3>
+                                </div>
+                                <div id="encounters-demonstration-collapse-2" class="collapse" aria-labelledby="encounters-demonstration-h-2" data-parent="#encounters-accordion-demonstration">
+                                    <div class="card-body">Here will be displayed the content of <strong>Encounter #2</strong></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info" style="margin-top: 1em">
+                            Note that you can also drag and drop the encounters to arrange in the order you want. You
+                            can try it on this example.
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <hr>
@@ -107,5 +163,10 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+
+    <script>
+        Sortable.create(document.getElementById('encounters-accordion-demonstration'), { animation: 150 })
+    </script>
 </body>
 </html>
