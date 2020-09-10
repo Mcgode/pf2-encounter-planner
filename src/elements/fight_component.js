@@ -45,7 +45,7 @@ export class FightComponent
         let minValue = 200
         let minKey = null
         for (let rating in XpPerRating) {
-            if (minValue > XpPerRating[rating] && XpPerRating[rating] >= xpPerPlayer) {
+            if (minValue > XpPerRating[rating] && XpPerRating[rating]+10 >= xpPerPlayer) {
                 minKey = rating
                 minValue = XpPerRating[rating]
             }
