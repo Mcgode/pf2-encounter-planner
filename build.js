@@ -1,10 +1,10 @@
-var fs = require('fs-extra');
-var rollup = require('rollup');
-var commonjs = require('rollup-plugin-commonjs');    // require
-var resolve = require('rollup-plugin-node-resolve'); // require from node_modules
-var terser = require('rollup-plugin-terser').terser; // minify
-var json = require('@rollup/plugin-json');
-var prettier = require('rollup-plugin-prettier');
+const fs = require('fs-extra');
+const rollup = require('rollup');
+const commonjs = require('rollup-plugin-commonjs');    // require
+const resolve = require('rollup-plugin-node-resolve'); // require from node_modules
+const terser = require('rollup-plugin-terser').terser; // minify
+const json = require('@rollup/plugin-json');
+const prettier = require('rollup-plugin-prettier');
 
 const MODULE_NAME = 'PF2EncounterPlanner';
 const MODULE_FILENAME = 'pf2_encounter_planner';
