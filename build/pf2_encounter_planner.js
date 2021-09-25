@@ -679,8 +679,8 @@
                         }
 
                         if (players.length) {
-                            let maxLevel = Math.max(...Object.values(this.playerHistory).map(p => p.last().level));
-                            let maxXp = Math.min(...Object.values(this.playerHistory).filter(p => p.last().level === maxLevel).map(p => p.last().level * 1000 + p.last().xp));
+                            let maxLevel = Math.max(...players.map(p => p.level));
+                            let maxXp = Math.min(...players.filter(p => p.level === maxLevel).map(p => p.level * 1000 + p.xp));
 
                             let xp;
                             switch (component.type) {
@@ -708,7 +708,7 @@
                                     xp = component.getEncounterXpPerPlayer();
                             }
 
-                            this.xpChange[event.id] = xp;
+                            this.xpChange[event.id] = Math.round(xp);
                             xp = xp || 0;
 
                             for (let player of players) {
@@ -721,7 +721,7 @@
 
                                 this.playerHistory[player.id].push({
                                     index: index,
-                                    xp: player.xp + additionalXp,
+                                    xp: Math.round(player.xp + additionalXp),
                                     level: player.level
                                 });
                             }
