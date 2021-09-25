@@ -140,7 +140,7 @@ export class Timeline
                                 xp = component.getEncounterXpPerPlayer()
                         }
 
-                        this.xpChange[event.id] = xp
+                        this.xpChange[event.id] = Math.round(xp);
                         xp = xp || 0
 
                         for (let player of players) {
@@ -153,7 +153,7 @@ export class Timeline
 
                             this.playerHistory[player.id].push({
                                 index: index,
-                                xp: player.xp + additionalXp,
+                                xp: Math.round(player.xp + additionalXp),
                                 level: player.level
                             })
                         }
